@@ -51,16 +51,22 @@ console.log('[/workspace/test/input.ts | L29C0]' + `${foo}`); // output
 
 ### `templateString`
 
-The template string for the log prefix. Defaults to `"[{fileName} | L{line}C{character}] "`
+The template string for the log prefix. Defaults to `"[{absoluteFilePath} | L{line}C{character}] "`.
+
+The following placeholders are available:
+
+- `absoluteFilePath`: The absolute path to the file
+- `fileName`: The name of the file
+- `projectFilePath`: The absolute path to the file from the project root. The project root is auto-detected, but can be modified via the `projectRoot` option
 
 ```typescript
-// templateString: "[{fileName} | L{line}C{character}] "
+// templateString: "[{absoluteFilePath} | L{line}C{character}] "
 console.log(foo); // input
 console.log('[/workspace/test/input.ts | L29C0]', foo); // output
 
-// templateString: "{fileName} {line} "
+// templateString: "{projectFilePath}, line {line} "
 console.log(foo); // input
-console.log('/workspace/test/input.ts 29', foo); // output
+console.log('/test/input.ts, line 29', foo); // output
 ```
 
 ### `expression` / `functionNames`

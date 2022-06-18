@@ -5,6 +5,7 @@ type TransformerConfig = {
   functionNames: string[];
   templateString: string;
   split: boolean;
+  projectRoot: string | undefined;
 };
 
 let transformerConfig: TransformerConfig = {
@@ -12,12 +13,26 @@ let transformerConfig: TransformerConfig = {
   functionNames: ['log', 'warn', 'trace', 'error', 'debug'],
   templateString: '[{fileName} | L{line}C{character}] ',
   split: true,
+  projectRoot: undefined,
 };
 
 type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
 
-const formatPrefix = (fileName: string, pos: ts.LineAndCharacter): string => {
+const formatPrefix = (
+  absoluteFilePath: string,
+  pos: ts.LineAndCharacter,
+): string => {
+  const projectFilePath =
+    transformerConfig.projectRoot &&
+    absoluteFilePath.startsWith(transformerConfig.projectRoot)
+      ? absoluteFilePath.replace(transformerConfig.projectRoot, '')
+      : absoluteFilePath;
+
+  const fileName = absoluteFilePath.replace(/^.*[\\/]/, '');
+
   return transformerConfig.templateString
+    .replace('{absoluteFilePath}', absoluteFilePath)
+    .replace('{projectFilePath}', projectFilePath)
     .replace('{fileName}', fileName)
     .replace('{line}', pos.line.toString())
     .replace('{character}', pos.character.toString());
@@ -147,12 +162,13 @@ const logLineNumberTransformer: ts.TransformerFactory<ts.SourceFile> = (
 };
 
 const transformerFactory = (
-  _: ts.Program,
+  program: ts.Program,
   config?: TransformerConfig,
 ): ts.TransformerFactory<ts.Node> => {
   transformerConfig = {
     ...transformerConfig,
     ...config,
+    projectRoot: config?.projectRoot ?? program.getCurrentDirectory(),
   };
 
   return logLineNumberTransformer;
