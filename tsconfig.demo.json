@@ -7,7 +7,8 @@
     "removeComments": true,
     "plugins": [
       {
-        "transform": "./src/index.ts"
+        "transform": "./src/index.ts",
+        "split": false
       }
     ]
   },

@@ -160,6 +160,18 @@ const isThisExpression = (node: ts.Node): node is ts.ThisExpression => {
 };
 
 /**
+ * Checks whether the specified node is a TypeOfExpression
+ *
+ * @Note: Currently not supported natively by TypeScript
+ *
+ * @param node  The node
+ * @returns     True if the node is a TypeOfExpression
+ */
+const isTypeOfExpression = (node: ts.Node): node is ts.TypeOfExpression => {
+  return node.kind === ts.SyntaxKind.TypeOfExpression;
+};
+
+/**
  * The transformer
  *
  * @param context  The transformation context
@@ -222,7 +234,8 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
         isFalseLiteral(node) ||
         isNullLiteral(node) ||
         isThisExpression(node) ||
-        isTrueLiteral(node)
+        isTrueLiteral(node) ||
+        isTypeOfExpression(node)
       ) {
         if (!isLogExpression(node.parent))
           return ts.visitEachChild(node, visitor, context);
