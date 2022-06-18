@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.test.json",
+  "compilerOptions": {
+    "outDir": "test-output-transformed",
+    "plugins": [
+      {
+        "transform": "./src/index.ts"
+        // "split": true,
+        // "templateString": "{line}",
+        // "functionNames": ["warn"]
+      }
+    ]
+  }
+}

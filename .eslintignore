@@ -1,0 +1,11 @@
+coverage/**
+dist/**
+scripts/**
+**/*.sh
+
+# JS configurations
+rollup.config.js
+
+# Tests
+test/**
+test-output/**

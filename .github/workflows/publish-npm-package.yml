@@ -1,0 +1,25 @@
+---
+name: Publish npm package (npmjs.org)
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  publish-npmjs:
+    if: github.repository_owner == 'bitpatty'
+    name: Publish NPM package (npmjs.org)
+    runs-on: ubuntu-latest
+    environment: npm-registry
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.13.1'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - run: npm run build
+      - run: npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

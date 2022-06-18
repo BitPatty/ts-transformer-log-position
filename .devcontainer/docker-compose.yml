@@ -1,0 +1,27 @@
+version: '3.7'
+
+networks:
+  ts-transformer-log-position-network:
+    name: ts-transformer-log-position-network
+    driver: bridge
+
+services:
+  application:
+    container_name: ts-transformer-log-position
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VARIANT: 14
+        USER_UID: 1000
+        USER_GID: 1000
+    networks:
+      - ts-transformer-log-position-network
+    volumes:
+      - ..:/workspace:cached
+      - ~/.ssh:/home/node/.ssh:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: sleep infinity
+    user: node
+    env_file:
+      - ./workspace.env

@@ -1,0 +1,47 @@
+{
+  "name": "@bitpatty/ts-transformer-log-position",
+  "version": "0.1.0",
+  "description": "Injects the position of log statements into the log message",
+  "author": "Matteias Collet <matteias.collet@bluewin.ch>",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf dist && rollup -c",
+    "deps:force-upgrade": "npm-check-updates -u && rm -rf node_modules && rm -f package-lock.json && npm i",
+    "docs": "typedoc src/index.ts",
+    "format": "prettier --write \"{src,test}/**/*.ts\" ",
+    "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
+    "test": "rimraf test-output && rimraf test-output-transformed && ttsc --project tsconfig.test.json && ttsc --project tsconfig.test-transformed.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BitPatty/ts-transformer-log-position.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BitPatty/ts-transformer-log-position/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/BitPatty/ts-transformer-log-position#readme",
+  "devDependencies": {
+    "@types/node": "16.11.27",
+    "@typescript-eslint/eslint-plugin": "5.28.0",
+    "@typescript-eslint/parser": "5.28.0",
+    "eslint": "8.18.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "npm-check-updates": "14.0.1",
+    "prettier": "2.7.1",
+    "rimraf": "3.0.2",
+    "rollup": "2.75.6",
+    "rollup-plugin-typescript2": "0.32.1",
+    "tslib": "2.4.0",
+    "ttypescript": "1.5.13",
+    "typescript": "4.7.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.0.2"
+  }
+}
