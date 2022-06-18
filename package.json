@@ -10,6 +10,7 @@
     "docs": "typedoc src/index.ts",
     "format": "prettier --write \"{src,test}/**/*.ts\" ",
     "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
+    "pretest": "jest --clearCache",
     "test": "jest --verbose --runInBand --coverage",
     "demo": "ttsc --project tsconfig.demo.json"
   },

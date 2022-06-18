@@ -11,7 +11,7 @@ export type TransformerConfig = {
   incrementLineNumber: boolean;
 };
 
-let transformerConfig: TransformerConfig = {
+const defaultTransformerConfig: TransformerConfig = {
   expression: 'console',
   functionNames: ['log', 'warn', 'trace', 'error', 'debug'],
   templateString: '[{fileName} | L{line}C{character}] ',
@@ -19,6 +19,8 @@ let transformerConfig: TransformerConfig = {
   projectRoot: undefined,
   incrementLineNumber: false,
 };
+
+let transformerConfig: TransformerConfig = defaultTransformerConfig;
 
 /**
  * Formats the prefix
@@ -267,7 +269,7 @@ const transformerFactory = (
   config?: Partial<TransformerConfig>,
 ): ts.TransformerFactory<ts.SourceFile> => {
   transformerConfig = {
-    ...transformerConfig,
+    ...defaultTransformerConfig,
     ...config,
     projectRoot: config?.projectRoot ?? program.getCurrentDirectory(),
   };
