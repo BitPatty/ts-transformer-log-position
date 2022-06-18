@@ -1,6 +1,8 @@
-import ts, { CallExpression } from 'typescript';
+import ts from 'typescript';
 
-type TransformerConfig = {
+type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
+
+export type TransformerConfig = {
   expression: string;
   functionNames: string[];
   templateString: string;
@@ -16,8 +18,13 @@ let transformerConfig: TransformerConfig = {
   projectRoot: undefined,
 };
 
-type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
-
+/**
+ * Formats the prefix
+ *
+ * @param absoluteFilePath  The file path
+ * @param pos               The position of the log expression
+ * @returns                 The formatted prefix
+ */
 const formatPrefix = (
   absoluteFilePath: string,
   pos: ts.LineAndCharacter,
@@ -38,13 +45,19 @@ const formatPrefix = (
     .replace('{character}', pos.character.toString());
 };
 
-const isLogStatement = (
+/**
+ * Checks whether the specified node is a log expression
+ *
+ * @param node  The target node
+ * @returns     True if the node is a log expression
+ */
+const isLogExpression = (
   node:
     | ts.Node
     | ts.CallExpression
     | ts.NewExpression
     | ts.ArrayLiteralExpression,
-): node is CallExpression => {
+): node is ts.CallExpression => {
   if (!ts.isCallExpression(node)) return false;
   const exp = node.expression;
   if (!ts.isPropertyAccessExpression(exp)) return false;
@@ -59,6 +72,15 @@ const isLogStatement = (
   return true;
 };
 
+/**
+ * Injects the line number into a log expression
+ *
+ * @param arg         The log expression
+ * @param sourceFile  The source file
+ * @param visitor     The visitor
+ * @param context     The transformer context
+ * @returns           The transformed expression
+ */
 const injectLineNumber = (
   arg: ts.Expression,
   sourceFile: ts.SourceFile,
@@ -84,12 +106,64 @@ const injectLineNumber = (
   );
 };
 
-const logLineNumberTransformer: ts.TransformerFactory<ts.SourceFile> = (
-  context,
-) => {
+/**
+ * Checks whether the specified node is a TrueLiteral
+ *
+ * @Note: Currently not supported natively by TypeScript
+ *
+ * @param node  The node
+ * @returns     True if the node is a TrueLiteral
+ */
+const isTrueLiteral = (node: ts.Node): node is ts.TrueLiteral => {
+  return node.kind === ts.SyntaxKind.TrueKeyword;
+};
+
+/**
+ * Checks whether the specified node is a FalseLiteral
+ *
+ * @Note: Currently not supported natively by TypeScript
+ *
+ * @param node  The node
+ * @returns     True if the node is a FalseLiteral
+ */
+const isFalseLiteral = (node: ts.Node): node is ts.TrueLiteral => {
+  return node.kind === ts.SyntaxKind.FalseKeyword;
+};
+
+/**
+ * Checks whether the specified node is a NullLiteral
+ *
+ * @Note: Currently not supported natively by TypeScript
+ *
+ * @param node  The node
+ * @returns     True if the node is a NullLiteral
+ */
+const isNullLiteral = (node: ts.Node): node is ts.NullLiteral => {
+  return node.kind === ts.SyntaxKind.NullKeyword;
+};
+
+/**
+ * Checks whether the specified node is a ThisExpression
+ *
+ * @Note: Currently not supported natively by TypeScript
+ *
+ * @param node  The node
+ * @returns     True if the node is a ThisExpression
+ */
+const isThisExpression = (node: ts.Node): node is ts.ThisExpression => {
+  return node.kind === ts.SyntaxKind.ThisKeyword;
+};
+
+/**
+ * The transformer
+ *
+ * @param context  The transformation context
+ * @returns        The transformed source file
+ */
+const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
   return (sourceFile) => {
     const visitor: Visitor = (node) => {
-      if (isLogStatement(node)) {
+      if (isLogExpression(node)) {
         const prefix = ts.factory.createStringLiteral(
           formatPrefix(
             sourceFile.fileName,
@@ -134,16 +208,18 @@ const logLineNumberTransformer: ts.TransformerFactory<ts.SourceFile> = (
         ts.isIdentifier(node) ||
         ts.isLiteralExpression(node) ||
         ts.isNewExpression(node) ||
-        ts.isNewExpression(node) ||
         ts.isObjectLiteralExpression(node) ||
         ts.isParenthesizedExpression(node) ||
         ts.isPostfixUnaryExpression(node) ||
         ts.isPropertyAccessExpression(node) ||
         ts.isSyntheticExpression(node) ||
         ts.isTemplateExpression(node) ||
-        ts.isTemplateExpression(node)
+        isFalseLiteral(node) ||
+        isNullLiteral(node) ||
+        isThisExpression(node) ||
+        isTrueLiteral(node)
       ) {
-        if (!isLogStatement(node.parent))
+        if (!isLogExpression(node.parent))
           return ts.visitEachChild(node, visitor, context);
 
         const firstArgument = node.parent.arguments[0];
@@ -161,17 +237,24 @@ const logLineNumberTransformer: ts.TransformerFactory<ts.SourceFile> = (
   };
 };
 
+/**
+ * Initializes a new transformer
+ *
+ * @param program  The program
+ * @param config   The trasformer configuration
+ * @returns        The transformer
+ */
 const transformerFactory = (
   program: ts.Program,
-  config?: TransformerConfig,
-): ts.TransformerFactory<ts.Node> => {
+  config?: Partial<TransformerConfig>,
+): ts.TransformerFactory<ts.SourceFile> => {
   transformerConfig = {
     ...transformerConfig,
     ...config,
     projectRoot: config?.projectRoot ?? program.getCurrentDirectory(),
   };
 
-  return logLineNumberTransformer;
+  return transformer;
 };
 
 export default transformerFactory;

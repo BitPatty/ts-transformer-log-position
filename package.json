@@ -1,6 +1,6 @@
 {
   "name": "@bitpatty/ts-transformer-log-position",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Injects the position of log statements into the log message",
   "author": "Matteias Collet <matteias.collet@bluewin.ch>",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
     "docs": "typedoc src/index.ts",
     "format": "prettier --write \"{src,test}/**/*.ts\" ",
     "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
-    "test": "rimraf test-output && rimraf test-output-transformed && ttsc --project tsconfig.test.json && ttsc --project tsconfig.test-transformed.json"
+    "test": "jest --verbose --runInBand --coverage"
   },
   "repository": {
     "type": "git",
@@ -26,17 +26,22 @@
   "types": "./dist/index.d.ts",
   "homepage": "https://github.com/BitPatty/ts-transformer-log-position#readme",
   "devDependencies": {
+    "@types/jest": "28.1.2",
     "@types/node": "16.11.27",
     "@typescript-eslint/eslint-plugin": "5.28.0",
     "@typescript-eslint/parser": "5.28.0",
+    "@typescript/vfs": "1.3.5",
     "eslint": "8.18.0",
     "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-jest": "26.5.3",
     "eslint-plugin-prettier": "4.0.0",
+    "jest-diff": "28.1.1",
     "npm-check-updates": "14.0.1",
     "prettier": "2.7.1",
     "rimraf": "3.0.2",
     "rollup": "2.75.6",
     "rollup-plugin-typescript2": "0.32.1",
+    "ts-jest": "28.0.5",
     "tslib": "2.4.0",
     "ttypescript": "1.5.13",
     "typescript": "4.7.4"
