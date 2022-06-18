@@ -14,7 +14,7 @@ export type TransformerConfig = {
 const defaultTransformerConfig: TransformerConfig = {
   expression: 'console',
   functionNames: ['log', 'warn', 'trace', 'error', 'debug'],
-  templateString: '[{fileName} | L{line}C{character}] ',
+  templateString: '[{projectFilePath}:{line}:{character}] ',
   split: true,
   projectRoot: undefined,
   incrementLineNumber: false,
@@ -46,7 +46,7 @@ const formatPrefix = (
 
   return transformerConfig.templateString
     .replace('{absoluteFilePath}', absoluteFilePath)
-    .replace('{projectFilePath}', projectFilePath)
+    .replace('{projectFilePath}', projectFilePath.replace(/^\//, ''))
     .replace('{fileName}', fileName)
     .replace('{line}', lineNumber.toString())
     .replace('{character}', pos.character.toString());

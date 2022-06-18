@@ -5,7 +5,7 @@ import {
 } from './test-utils';
 
 test('console.log()', () => {
-  expect('console.log()').transformsInto('console.log("[index.ts | L0C0]");');
+  expect('console.log()').transformsInto('console.log("[index.ts:0:0]");');
 });
 
 const testSet = [
@@ -30,14 +30,14 @@ const testSet = [
 describe('Split', () => {
   test.each(testSet)('console.log(%s)', (str: string, _) => {
     expect(createLogStatement(str)).transformsInto(
-      `console.log("[index.ts | L0C0]", ${str});`,
+      `console.log("[index.ts:0:0]", ${str});`,
     );
   });
 
   test.each(testSet)('console.log(myVar) (is %s)', (str) => {
     const srcStr = `const myVar = ${str}; ${createLogStatement('myVar')}`;
     expect(srcStr).transformsInto(
-      `const myVar = ${str};\nconsole.log("[index.ts | L0C${srcStr.indexOf(
+      `const myVar = ${str};\nconsole.log("[index.ts:0:${srcStr.indexOf(
         'console',
       )}]", myVar);`,
     );
@@ -48,7 +48,7 @@ describe('No Split', () => {
   test.each(testSet)('console.log(%s)', (str: string, wrap) => {
     const wrapped = wrap ? createTemplateLiteral(str) : str;
     expect(`console.log(${str})`).transformsInto(
-      `console.log("[index.ts | L0C0] " + ${wrapped});`,
+      `console.log("[index.ts:0:0] " + ${wrapped});`,
       { split: false },
     );
   });
@@ -57,9 +57,9 @@ describe('No Split', () => {
     const srcStr = `const myVar = ${str}; ${createLogStatement('myVar')}`;
     expect(srcStr).transformsInto(
       `const myVar = ${str};\n${createLogStatement(
-        `"[index.ts | L0C${getConsoleIndex(
-          srcStr,
-        )}] " + ${createTemplateLiteral('myVar')}`,
+        `"[index.ts:0:${getConsoleIndex(srcStr)}] " + ${createTemplateLiteral(
+          'myVar',
+        )}`,
       )}`,
       { split: false },
     );

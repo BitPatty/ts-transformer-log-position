@@ -7,7 +7,7 @@ export default (): Config.InitialOptions => {
     coverageReporters: ['lcov', 'html', 'json'],
     setupFilesAfterEnv: ['./jest.setup.ts'],
     verbose: true,
-    testMatch: ['**/config.test.ts'],
+    testMatch: ['**/*.test.ts'],
     globals: {
       'ts-jest': {
         compiler: 'ttypescript',

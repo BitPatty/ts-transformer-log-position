@@ -15,7 +15,7 @@ const testSet = [
 describe('Split', () => {
   test.each(testSet)('console.log(%s)', (str) => {
     expect(createLogStatement(str)).transformsInto(
-      `console.log("[index.ts | L0C0]", ${str});`,
+      `console.log("[index.ts:0:0]", ${str});`,
     );
   });
 });
@@ -23,7 +23,7 @@ describe('Split', () => {
 describe('No Split', () => {
   test.each(testSet)('console.log(%s)', (str) => {
     expect(createLogStatement(str)).transformsInto(
-      `console.log("[index.ts | L0C0] " + ${createTemplateLiteral(str)});`,
+      `console.log("[index.ts:0:0] " + ${createTemplateLiteral(str)});`,
       {
         split: false,
       },

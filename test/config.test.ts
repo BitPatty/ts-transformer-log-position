@@ -25,7 +25,7 @@ Logger.log("test");
         console.log(msg);
     }
 }
-Logger.log("[index.ts | L7C0]", "test");`,
+Logger.log("[index.ts:7:0]", "test");`,
       {
         expression: 'Logger',
       },

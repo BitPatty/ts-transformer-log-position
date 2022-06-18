@@ -1,6 +1,6 @@
 {
   "name": "@bitpatty/ts-transformer-log-position",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Injects the position of log statements into the log message",
   "author": "Matteias Collet <matteias.collet@bluewin.ch>",
   "main": "dist/index.js",

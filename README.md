@@ -25,10 +25,10 @@ A typescript transformer that injects the position of a log statement from the o
 
 ```typescript
 console.log(); // input
-console.log('[/workspace/test/input.ts | L19C0]'); // output
+console.log('[demo/demo.ts:19:0]'); // output
 
 console.log(foo); // input
-console.log('[/workspace/test/input.ts | L29C0]', foo); // output
+console.log('[demo/demo.ts:29:0', foo); // output
 ```
 
 ## Configuration
@@ -41,13 +41,13 @@ Whether to split the arguments in the log statement. Defaults to `true`.
 
 ```typescript
 // split: true
-console.log('[/workspace/test/input.ts | L29C0]', foo); // split: true
-console.log('[/workspace/test/input.ts | L29C0]' + `${foo}`); // split: false
+console.log('[demo/demo.ts:29:0', foo); // split: true
+console.log('[demo/demo.ts:29:0' + `${foo}`); // split: false
 ```
 
 ### `templateString`
 
-The template string for the log prefix. Defaults to `"[{absoluteFilePath} | L{line}C{character}] "`.
+The template string for the log prefix. Defaults to `"[{projectFilePath}:{line}:{character}] "`.
 
 The following placeholders are available:
 
@@ -56,7 +56,7 @@ The following placeholders are available:
 - `projectFilePath`: The absolute path to the file from the project root. The project root is auto-detected, but can be modified via the `projectRoot` option
 
 ```typescript
-console.log('[/workspace/test/input.ts | L29C0]', foo); // templateString: "[{absoluteFilePath} | L{line}C{character}] "
+console.log('[demo/demo.ts:29:0]', foo); // templateString: "[{absoluteFilePath} | L{line}C{character}] "
 console.log('/test/input.ts, line 29', foo); // templateString: "{projectFilePath}, line {line} "
 ```
 
@@ -69,11 +69,11 @@ The pattern of the call expression that should be matched against to apply the t
 
 ```typescript
 // functionNames: ['warn']
-console.warn('[/workspace/test/input.ts | L29C0]', foo);
+console.warn('[demo/demo.ts:29:0]', foo);
 console.log(foo); // not modified
 
 // expression: "Logger"
-Logger.log('[/workspace/test/input.ts | L29C0]', foo);
+Logger.log('[demo/demo.ts:29:0', foo);
 console.log(foo); // not modified
 ```
 
