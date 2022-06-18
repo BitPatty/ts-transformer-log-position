@@ -91,3 +91,7 @@ Logger.log('[/workspace/test/input.ts | L29C0]', foo); // output
 console.log(foo); // input
 console.log(foo); // output
 ```
+
+### `incrementLineNumber`
+
+Adds +1 to each line number to match the numbering of common editors (starting from 1 instead of 0). Defaults to `false`.

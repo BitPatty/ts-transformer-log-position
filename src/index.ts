@@ -8,6 +8,7 @@ export type TransformerConfig = {
   templateString: string;
   split: boolean;
   projectRoot: string | undefined;
+  incrementLineNumber: boolean;
 };
 
 let transformerConfig: TransformerConfig = {
@@ -16,6 +17,7 @@ let transformerConfig: TransformerConfig = {
   templateString: '[{fileName} | L{line}C{character}] ',
   split: true,
   projectRoot: undefined,
+  incrementLineNumber: false,
 };
 
 /**
@@ -36,12 +38,15 @@ const formatPrefix = (
       : absoluteFilePath;
 
   const fileName = absoluteFilePath.replace(/^.*[\\/]/, '');
+  const lineNumber = transformerConfig.incrementLineNumber
+    ? pos.line + 1
+    : pos.line;
 
   return transformerConfig.templateString
     .replace('{absoluteFilePath}', absoluteFilePath)
     .replace('{projectFilePath}', projectFilePath)
     .replace('{fileName}', fileName)
-    .replace('{line}', pos.line.toString())
+    .replace('{line}', lineNumber.toString())
     .replace('{character}', pos.character.toString());
 };
 
