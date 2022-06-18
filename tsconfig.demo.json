@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": false,
+    "declaration": false,
+    "outDir": "demo",
+    "removeComments": true,
+    "plugins": [
+      {
+        "transform": "./src/index.ts"
+      }
+    ]
+  },
+
+  "include": ["demo/**/*"]
+}

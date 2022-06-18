@@ -20,6 +20,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "test/**/*", "./*.ts"],
+  "include": ["src/**/*", "test/**/*", "demo/**/*.ts", "./*.ts"],
   "exclude": ["node_modules", "dist", "rollup.config.js"]
 }

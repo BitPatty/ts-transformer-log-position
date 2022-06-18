@@ -1,6 +1,7 @@
 coverage/**
 dist/**
 scripts/**
+demo/**
 **/*.sh
 
 # JS configurations

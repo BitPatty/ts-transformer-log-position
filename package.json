@@ -10,7 +10,8 @@
     "docs": "typedoc src/index.ts",
     "format": "prettier --write \"{src,test}/**/*.ts\" ",
     "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
-    "test": "jest --verbose --runInBand --coverage"
+    "test": "jest --verbose --runInBand --coverage",
+    "demo": "ttsc --project tsconfig.demo.json"
   },
   "repository": {
     "type": "git",
