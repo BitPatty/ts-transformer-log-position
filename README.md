@@ -28,7 +28,7 @@ console.log(); // input
 console.log('[demo/demo.ts:19:0]'); // output
 
 console.log(foo); // input
-console.log('[demo/demo.ts:29:0', foo); // output
+console.log('[demo/demo.ts:29:0]', foo); // output
 ```
 
 ## Configuration
@@ -41,8 +41,8 @@ Whether to split the arguments in the log statement. Defaults to `true`.
 
 ```typescript
 // split: true
-console.log('[demo/demo.ts:29:0', foo); // split: true
-console.log('[demo/demo.ts:29:0' + `${foo}`); // split: false
+console.log('[demo/demo.ts:29:0]', foo); // split: true
+console.log('[demo/demo.ts:29:0]' + `${foo}`); // split: false
 ```
 
 ### `templateString`
@@ -73,7 +73,7 @@ console.warn('[demo/demo.ts:29:0]', foo);
 console.log(foo); // not modified
 
 // expression: "Logger"
-Logger.log('[demo/demo.ts:29:0', foo);
+Logger.log('[demo/demo.ts:29:0]', foo);
 console.log(foo); // not modified
 ```
 
