@@ -22,5 +22,5 @@ export default {
       transformers: [],
     }),
   ],
-  external: ['typescript'],
+  external: ['typescript', 'node:assert'],
 };
