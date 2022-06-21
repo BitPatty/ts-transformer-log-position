@@ -25,10 +25,10 @@ A typescript transformer that injects the position of a log statement from the o
 
 ```typescript
 console.log(); // input
-console.log('[demo/demo.ts:19:0]'); // output
+console.log('[src/sample.ts:0:0]'); // output
 
 console.log(foo); // input
-console.log('[demo/demo.ts:29:0]', foo); // output
+console.log('[src/sample.ts:3:0]', foo); // output
 ```
 
 ## Configuration
@@ -41,8 +41,8 @@ Whether to split the arguments in the log statement. Defaults to `true`.
 
 ```typescript
 // split: true
-console.log('[demo/demo.ts:29:0]', foo); // split: true
-console.log('[demo/demo.ts:29:0]' + `${foo}`); // split: false
+console.log('[src/sample.ts:0:0]', foo); // split: true
+console.log('[src/sample.ts:1:0]' + `${foo}`); // split: false
 ```
 
 ### `templateString`
@@ -56,27 +56,24 @@ The following placeholders are available:
 - `projectFilePath`: The absolute path to the file from the project root. The project root is auto-detected, but can be modified via the `projectRoot` option
 
 ```typescript
-console.log('[demo/demo.ts:29:0]', foo); // templateString: "[{absoluteFilePath} | L{line}C{character}] "
-console.log('/test/input.ts, line 29', foo); // templateString: "{projectFilePath}, line {line} "
+console.log('[/workspace/src/sample.ts:0:0]', foo); // templateString: "[{absoluteFilePath} | L{line}C{character}] "
+console.log('/src/sample.ts, line 1', foo); // templateString: "{projectFilePath}, line {line} "
 ```
 
-### `expression` / `functionNames`
+### `expressions`
 
-The pattern of the call expression that should be matched against to apply the transformer. Defaults to:
-
-- `expression`: `"console"`
-- `functionNames`: `['log', 'warn', 'trace', 'error', 'debug']`
+The pattern of the call expression that should be matched against to apply the transformer. Defaults to: `['console.log', 'console.warn', 'console.debug', 'console.error', 'console.trace']`
 
 ```typescript
-// functionNames: ['warn']
-console.warn('[demo/demo.ts:29:0]', foo);
+// expressions: "Logger.log"
+Logger.log('[src/sample.ts:1:0]', foo);
 console.log(foo); // not modified
 
-// expression: "Logger"
-Logger.log('[demo/demo.ts:29:0]', foo);
-console.log(foo); // not modified
+// expressions: ["Logger.log", "console.log"]
+Logger.log('[src/sample.ts:5:0]', foo);
+console.log('[src/sample.ts:6:0]', foo);
 ```
 
-### `incrementLineNumber`
+### `incrementLineNumber` / `incrementCharNumber`
 
-Adds +1 to each line number to match the numbering of common editors (starting from 1 instead of 0). Defaults to `false`.
+Adds +1 to each line / character number to match the numbering of common editors (starting from 1 instead of 0). Defaults to `false`.

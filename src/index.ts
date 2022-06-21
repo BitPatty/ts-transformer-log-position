@@ -1,37 +1,26 @@
 import ts from 'typescript';
+import {
+  AccessTreeNode,
+  TransformerConfig,
+  TransformerOptions,
+} from './tranformer.config';
 
 type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
 
-export type TransformerConfig = {
-  expression: string;
-  functionNames: string[];
-  templateString: string;
-  split: boolean;
-  projectRoot: string | undefined;
-  incrementLineNumber: boolean;
-};
-
-const defaultTransformerConfig: TransformerConfig = {
-  expression: 'console',
-  functionNames: ['log', 'warn', 'trace', 'error', 'debug'],
-  templateString: '[{projectFilePath}:{line}:{character}] ',
-  split: true,
-  projectRoot: undefined,
-  incrementLineNumber: false,
-};
-
-let transformerConfig: TransformerConfig = defaultTransformerConfig;
+let transformerConfig: TransformerConfig;
 
 /**
  * Formats the prefix
  *
  * @param absoluteFilePath  The file path
  * @param pos               The position of the log expression
+ * @param addSpace          Whether to add a trailing whitespace character
  * @returns                 The formatted prefix
  */
 const formatPrefix = (
   absoluteFilePath: string,
   pos: ts.LineAndCharacter,
+  addSpace?: boolean,
 ): string => {
   const projectFilePath =
     transformerConfig.projectRoot &&
@@ -43,13 +32,44 @@ const formatPrefix = (
   const lineNumber = transformerConfig.incrementLineNumber
     ? pos.line + 1
     : pos.line;
+  const charNumber = transformerConfig.incrementCharNumber
+    ? pos.character + 1
+    : pos.character;
 
-  return transformerConfig.templateString
+  const interpolated = transformerConfig.templateString
     .replace('{absoluteFilePath}', absoluteFilePath)
     .replace('{projectFilePath}', projectFilePath.replace(/^\//, ''))
     .replace('{fileName}', fileName)
     .replace('{line}', lineNumber.toString())
-    .replace('{character}', pos.character.toString());
+    .replace('{character}', charNumber.toString());
+
+  return addSpace ? `${interpolated} ` : interpolated;
+};
+
+/**
+ * Checks whether the specified expression ends up being a log
+ * message in the property access tree
+ *
+ * @param exp   The current expression
+ * @param node  The current node
+ * @returns     True if the current expression is a leaf node
+ */
+const matchesExpressionTree = (
+  exp: ts.PropertyAccessExpression | ts.CallExpression,
+  node: AccessTreeNode | undefined,
+): boolean => {
+  if (typeof node === 'undefined') return false;
+
+  if (ts.isIdentifier(exp.expression)) {
+    const childNode = node.children?.[exp.expression.escapedText.toString()];
+    return childNode?.leaf === true;
+  }
+
+  if (!ts.isPropertyAccessExpression(exp.expression)) return false;
+  const subTree = node.children?.[exp.expression.name.escapedText.toString()];
+  if (typeof subTree === 'undefined') return false;
+
+  return matchesExpressionTree(exp.expression, subTree);
 };
 
 /**
@@ -65,18 +85,9 @@ const isLogExpression = (
     | ts.NewExpression
     | ts.ArrayLiteralExpression,
 ): node is ts.CallExpression => {
+  if (!transformerConfig.accessTree) return false;
   if (!ts.isCallExpression(node)) return false;
-  const exp = node.expression;
-  if (!ts.isPropertyAccessExpression(exp)) return false;
-  if (!ts.isIdentifier(exp.expression)) return false;
-  if (!ts.isIdentifier(exp.name)) return false;
-  if (exp.expression.escapedText !== transformerConfig.expression) return false;
-  if (
-    !transformerConfig.functionNames.includes(exp.name.escapedText.toString())
-  )
-    return false;
-
-  return true;
+  return matchesExpressionTree(node, transformerConfig.accessTree);
 };
 
 /**
@@ -100,7 +111,9 @@ const injectLineNumber = (
   const visited = ts.visitEachChild(arg, visitor, context);
 
   return ts.factory.createBinaryExpression(
-    ts.factory.createStringLiteral(formatPrefix(sourceFile.fileName, position)),
+    ts.factory.createStringLiteral(
+      formatPrefix(sourceFile.fileName, position, true),
+    ),
     ts.SyntaxKind.PlusToken,
     ts.isTemplateLiteral(visited) || ts.isStringLiteral(visited)
       ? visited
@@ -266,15 +279,12 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
  */
 const transformerFactory = (
   program: ts.Program,
-  config?: Partial<TransformerConfig>,
+  config?: Partial<TransformerOptions>,
 ): ts.TransformerFactory<ts.SourceFile> => {
-  transformerConfig = {
-    ...defaultTransformerConfig,
-    ...config,
-    projectRoot: config?.projectRoot ?? program.getCurrentDirectory(),
-  };
-
+  transformerConfig = new TransformerConfig(program, config);
   return transformer;
 };
 
 export default transformerFactory;
+
+export { TransformerOptions };

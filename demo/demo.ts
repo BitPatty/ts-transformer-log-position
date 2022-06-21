@@ -113,3 +113,17 @@ const cpyB = console.log('foo');
 console.log(() => {
   console.log('foo');
 });
+
+const globalLog = (msg: string) => console.log(msg);
+
+globalLog('foobar');
+
+const foo = {
+  log: () => {},
+  console: {
+    log: () => {},
+  },
+};
+
+foo.log();
+foo.console.log();

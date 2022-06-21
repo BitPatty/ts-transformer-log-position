@@ -1,3 +1,14 @@
+import { diff } from 'jest-diff';
+
+import ts from 'typescript';
+import {
+  createDefaultMapFromNodeModules,
+  createSystem,
+  createVirtualCompilerHost,
+} from '@typescript/vfs';
+
+import transformerFactory, { TransformerOptions } from './src';
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 declare global {
@@ -8,28 +19,17 @@ declare global {
       // Put custom matchers here
       transformsInto(
         res: string,
-        options?: Partial<TransformerConfig>,
+        options?: Partial<TransformerOptions>,
       ): Promise<jest.CustomMatcherResult>;
     }
   }
 }
 
-import { diff } from 'jest-diff';
-
-import ts from 'typescript';
-import {
-  createDefaultMapFromNodeModules,
-  createSystem,
-  createVirtualCompilerHost,
-} from '@typescript/vfs';
-
-import transformerFactory, { TransformerConfig } from './src';
-
 expect.extend({
   transformsInto(
     received: string,
     expected: string,
-    options?: Partial<TransformerConfig>,
+    options?: Partial<TransformerOptions>,
   ): jest.CustomMatcherResult {
     const compilerOptions = {
       module: ts.ModuleKind.ESNext,
@@ -80,16 +80,29 @@ expect.extend({
     });
 
     const outFile = fsMap.get('index.js')?.trim();
-    const pass = outFile === expected;
+
+    const normalizedOutput = outFile
+      ?.split('\n')
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const normalizedExpected = expected
+      .split('\n')
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const pass = normalizedOutput === normalizedExpected;
 
     const message = pass
       ? () =>
           this.utils.matcherHint('transformsInto', undefined, undefined) +
           '\n\n' +
-          `Expected: ${this.utils.printExpected(expected)}\n` +
-          `Received: ${this.utils.printReceived(outFile)}`
+          `Expected: ${this.utils.printExpected(normalizedExpected)}\n` +
+          `Received: ${this.utils.printReceived(normalizedOutput)}`
       : () => {
-          const diffString = diff(expected, outFile, {
+          const diffString = diff(normalizedExpected, normalizedOutput, {
             expand: this.expand,
           });
           return (
@@ -97,8 +110,8 @@ expect.extend({
             '\n\n' +
             (diffString && diffString.includes('- Expect')
               ? `Difference:\n\n${diffString}`
-              : `Expected: ${this.utils.printExpected(expected)}\n` +
-                `Received: ${this.utils.printReceived(outFile)}`)
+              : `Expected: ${this.utils.printExpected(normalizedExpected)}\n` +
+                `Received: ${this.utils.printReceived(normalizedOutput)}`)
           );
         };
 

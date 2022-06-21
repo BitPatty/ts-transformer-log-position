@@ -112,3 +112,13 @@ const cpyB = console.log("[demo/demo.ts:111:13] " + 'foo');
 console.log("[demo/demo.ts:112:0] " + `${() => {
     console.log("[demo/demo.ts:113:2] " + 'foo');
 }}`);
+const globalLog = (msg) => console.log("[demo/demo.ts:116:35] " + `${msg}`);
+globalLog("[demo/demo.ts:118:0] " + 'foobar');
+const foo = {
+    log: () => { },
+    console: {
+        log: () => { },
+    },
+};
+foo.log();
+foo.console.log();
