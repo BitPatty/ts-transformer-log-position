@@ -65,6 +65,9 @@ const matchesExpressionTree = (
     return childNode?.leaf === true;
   }
 
+  if (isThisExpression(exp.expression))
+    return node.children?.['this'].leaf === true;
+
   if (!ts.isPropertyAccessExpression(exp.expression)) return false;
   const subTree = node.children?.[exp.expression.name.escapedText.toString()];
   if (typeof subTree === 'undefined') return false;

@@ -7,7 +7,15 @@
     "removeComments": true,
     "plugins": [
       {
-        "expressions": ["console.log", "console.warn", "globalLog"],
+        "expressions": [
+          "console.log",
+          "console.warn",
+          "globalLog",
+          "this.log",
+          "this.logger.log",
+          "foo.log",
+          "foo.console.log"
+        ],
         "transform": "./src/index.ts",
         "split": false
       }

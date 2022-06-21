@@ -127,3 +127,13 @@ const foo = {
 
 foo.log();
 foo.console.log();
+
+class Foo {
+  public logger: Foo;
+  private log() {}
+
+  public print() {
+    this.log();
+    this.logger.log();
+  }
+}

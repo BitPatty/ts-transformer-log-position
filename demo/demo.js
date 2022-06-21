@@ -120,5 +120,12 @@ const foo = {
         log: () => { },
     },
 };
-foo.log();
-foo.console.log();
+foo.log("[demo/demo.ts:127:0]");
+foo.console.log("[demo/demo.ts:128:0]");
+class Foo {
+    log() { }
+    print() {
+        this.log("[demo/demo.ts:135:4]");
+        this.logger.log("[demo/demo.ts:136:4]");
+    }
+}
