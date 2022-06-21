@@ -9,6 +9,61 @@ type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
 
 let transformerConfig: TransformerConfig;
 
+const IGNORE_FILE_PATTERN = '@ts-transformer-log-position disable';
+const IGNORE_LINE_PATTERN = '@ts-transformer-log-position ignore';
+
+/**
+ * Checks whether the current file should be ignored by
+ * the transformer
+ *
+ * @param sourceFile  The source file
+ * @returns           True if the file should be ignored
+ */
+const isFileIgnored = (sourceFile: ts.SourceFile): boolean => {
+  const fileContent = sourceFile.getFullText();
+  const lines = fileContent.split('\n');
+
+  let isCommentBlock = false;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmedLine = lines[i].trim();
+    if (trimmedLine.includes(`${IGNORE_FILE_PATTERN}`)) return true;
+
+    if (!isCommentBlock && trimmedLine.startsWith('/*')) {
+      isCommentBlock = true;
+      continue;
+    }
+
+    if (isCommentBlock && trimmedLine.endsWith('*/')) {
+      isCommentBlock = false;
+      continue;
+    }
+
+    if (isCommentBlock) continue;
+    if (trimmedLine.length === 0) continue;
+    if (!trimmedLine.startsWith('//')) return false;
+  }
+
+  return false;
+};
+
+/**
+ * Scans the source file for ignore comments
+ *
+ * @param sourceFile  The source file
+ * @returns           The line numbers that should be ignored
+ */
+const scanForIgnoredLines = (sourceFile: ts.SourceFile): number[] => {
+  const fileContent = sourceFile.getFullText();
+  const lines = fileContent.split('\n');
+  const lineNumbers = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes(IGNORE_LINE_PATTERN)) lineNumbers.push(i + 1);
+  }
+
+  return lineNumbers;
+};
+
 /**
  * Formats the prefix
  *
@@ -197,13 +252,24 @@ const isTypeOfExpression = (node: ts.Node): node is ts.TypeOfExpression => {
  */
 const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
   return (sourceFile) => {
+    if (isFileIgnored(sourceFile)) {
+      const visitor: Visitor = (n) => ts.visitEachChild(n, visitor, context);
+      return ts.visitNode(sourceFile, visitor);
+    }
+
+    const ignoredLines = scanForIgnoredLines(sourceFile);
+
     const visitor: Visitor = (node) => {
+      const nodePosition = sourceFile.getLineAndCharacterOfPosition(
+        node.getStart(),
+      );
+
       if (isLogExpression(node)) {
+        if (ignoredLines.includes(nodePosition.line))
+          return ts.visitEachChild(node, visitor, context);
+
         const prefix = ts.factory.createStringLiteral(
-          formatPrefix(
-            sourceFile.fileName,
-            sourceFile.getLineAndCharacterOfPosition(node.getStart()),
-          ).trim(),
+          formatPrefix(sourceFile.fileName, nodePosition).trim(),
         );
 
         // No arguments
@@ -256,6 +322,14 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
         isTypeOfExpression(node)
       ) {
         if (!isLogExpression(node.parent))
+          return ts.visitEachChild(node, visitor, context);
+
+        if (
+          ignoredLines.includes(
+            sourceFile.getLineAndCharacterOfPosition(node.parent.getStart())
+              .line,
+          )
+        )
           return ts.visitEachChild(node, visitor, context);
 
         const firstArgument = node.parent.arguments[0];

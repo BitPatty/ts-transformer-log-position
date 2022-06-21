@@ -31,6 +31,31 @@ console.log(foo); // input
 console.log('[src/sample.ts:3:0]', foo); // output
 ```
 
+## Ignoring lines
+
+Individual lines can be ignored by adding `@ts-transformer-log-position ignore` to the line before the log statement. To ignore an entire file add `@ts-transformer-log-position disable` on the top of the file (before any imports or logic).
+
+```typescript
+// @ts-transformer-log-position disable
+console.log('foo'); // will be ignored
+console.log('foo'); // will be ignored
+```
+
+```typescript
+/* Some other comments */
+// ...
+
+// @ts-transformer-log-position disable
+console.log('foo'); // will be ignored
+console.log('foo'); // will be ignored
+```
+
+```typescript
+console.log('foo'); // will NOT be ignored
+// @ts-transformer-log-position disable
+console.log('foo'); // will be ignored
+```
+
 ## Configuration
 
 The plugin provides the configuration options below.

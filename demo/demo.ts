@@ -26,6 +26,8 @@ const edgeObj = {
 // Logs
 console.log();
 console.log('foo');
+// @ts-transformer-log-position ignore
+console.log('foo');
 console.log(`${c_stringLiteral}`);
 console.log(1);
 console.log(true);
