@@ -26,13 +26,15 @@ const isFileIgnored = (sourceFile: ts.SourceFile): boolean => {
   let isCommentBlock = false;
   for (let i = 0; i < lines.length; i++) {
     const trimmedLine = lines[i].trim();
-    if (trimmedLine.includes(`${IGNORE_FILE_PATTERN}`)) return true;
+    if (trimmedLine.includes(IGNORE_FILE_PATTERN)) return true;
 
+    // Start of multiline comment
     if (!isCommentBlock && trimmedLine.startsWith('/*')) {
       isCommentBlock = true;
       continue;
     }
 
+    // End of multiline comment
     if (isCommentBlock && trimmedLine.endsWith('*/')) {
       isCommentBlock = false;
       continue;
@@ -334,6 +336,7 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
 
         const firstArgument = node.parent.arguments[0];
 
+        // Same position => same node
         if (!firstArgument || firstArgument.pos !== node.pos)
           return ts.visitEachChild(node, visitor, context);
 
