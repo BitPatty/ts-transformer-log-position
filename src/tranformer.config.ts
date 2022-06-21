@@ -3,12 +3,37 @@ import ts from 'typescript';
 
 export type TransformerOptions = {
   expressions: string | string[];
-  templateString: string;
-  split: boolean;
   projectRoot: string;
-  incrementLineNumber: boolean;
+  templateString: string;
   incrementCharNumber: boolean;
+  incrementLineNumber: boolean;
+  split: boolean;
 };
+
+// The access tree is a reverse tree based on the order of property access
+// expressions.
+//
+// The expressions ["console.log", "console.warn", "foo.bar.log"] are mapped
+// into the following reverse tree, where the topmost children are the log
+// log functions:
+//
+// ──────────────────┬─────────────┬──────
+//                   │             │
+//                   │             │
+//               ┌───▼───┐     ┌───▼───┐
+//               │  log  │     │ warn  │
+//               └┬──┬───┘     └───┬───┘
+//                │  │             │
+//      ┌─────────┘  │             │
+//      │            │             │
+//  ┌───▼───┐   ┌────▼────┐   ┌────▼────┐
+//  │  bar  │   │ console │   │ console │
+//  └───┬───┘   └─────────┘   └─────────┘
+//      │
+//      │
+//  ┌───▼───┐
+//  │  foo  │
+//  └───────┘
 
 export type AccessTreeNode = {
   leaf: boolean;
@@ -23,9 +48,10 @@ export class TransformerConfig {
   public readonly accessTree: AccessTreeRootNode;
   public readonly projectRoot: string | undefined;
   public readonly templateString: string;
-  public readonly split: boolean;
-  public readonly incrementLineNumber: boolean;
+
   public readonly incrementCharNumber: boolean;
+  public readonly incrementLineNumber: boolean;
+  public readonly split: boolean;
 
   public constructor(
     program: ts.Program,

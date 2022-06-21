@@ -55,15 +55,11 @@ const isFileIgnored = (sourceFile: ts.SourceFile): boolean => {
  * @returns           The line numbers that should be ignored
  */
 const scanForIgnoredLines = (sourceFile: ts.SourceFile): number[] => {
-  const fileContent = sourceFile.getFullText();
-  const lines = fileContent.split('\n');
-  const lineNumbers = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes(IGNORE_LINE_PATTERN)) lineNumbers.push(i + 1);
-  }
-
-  return lineNumbers;
+  return sourceFile
+    .getFullText()
+    .split('\n')
+    .map((v, idx) => (v.includes(IGNORE_LINE_PATTERN) ? idx + 1 : 0))
+    .filter((idx) => idx > 0);
 };
 
 /**
@@ -79,16 +75,18 @@ const formatPrefix = (
   pos: ts.LineAndCharacter,
   addSpace?: boolean,
 ): string => {
+  const fileName = absoluteFilePath.replace(/^.*[\\/]/, '');
+
   const projectFilePath =
     transformerConfig.projectRoot &&
     absoluteFilePath.startsWith(transformerConfig.projectRoot)
       ? absoluteFilePath.replace(transformerConfig.projectRoot, '')
       : absoluteFilePath;
 
-  const fileName = absoluteFilePath.replace(/^.*[\\/]/, '');
   const lineNumber = transformerConfig.incrementLineNumber
     ? pos.line + 1
     : pos.line;
+
   const charNumber = transformerConfig.incrementCharNumber
     ? pos.character + 1
     : pos.character;
@@ -123,7 +121,7 @@ const matchesExpressionTree = (
   }
 
   if (isThisExpression(exp.expression))
-    return node.children?.['this'].leaf === true;
+    return node.children?.['this']?.leaf === true;
 
   if (!ts.isPropertyAccessExpression(exp.expression)) return false;
   const subTree = node.children?.[exp.expression.name.escapedText.toString()];
@@ -157,6 +155,7 @@ const isLogExpression = (
  * @param sourceFile  The source file
  * @param visitor     The visitor
  * @param context     The transformer context
+ * @param position    The position of the log statement
  * @returns           The transformed expression
  */
 const injectLineNumber = (
@@ -164,10 +163,8 @@ const injectLineNumber = (
   sourceFile: ts.SourceFile,
   visitor: Visitor,
   context: ts.TransformationContext,
+  position: ts.LineAndCharacter,
 ): ts.Expression => {
-  const position = sourceFile.getLineAndCharacterOfPosition(
-    arg.parent.getStart(),
-  );
   const visited = ts.visitEachChild(arg, visitor, context);
 
   return ts.factory.createBinaryExpression(
@@ -326,21 +323,25 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
         if (!isLogExpression(node.parent))
           return ts.visitEachChild(node, visitor, context);
 
-        if (
-          ignoredLines.includes(
-            sourceFile.getLineAndCharacterOfPosition(node.parent.getStart())
-              .line,
-          )
-        )
+        const logPosition = sourceFile.getLineAndCharacterOfPosition(
+          node.parent.getStart(),
+        );
+
+        if (ignoredLines.includes(logPosition.line))
           return ts.visitEachChild(node, visitor, context);
 
+        // Different position => different node
         const firstArgument = node.parent.arguments[0];
-
-        // Same position => same node
         if (!firstArgument || firstArgument.pos !== node.pos)
           return ts.visitEachChild(node, visitor, context);
 
-        return injectLineNumber(node, sourceFile, visitor, context);
+        return injectLineNumber(
+          node,
+          sourceFile,
+          visitor,
+          context,
+          logPosition,
+        );
       }
 
       return ts.visitEachChild(node, visitor, context);
