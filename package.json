@@ -1,7 +1,7 @@
 {
   "name": "@bitpatty/ts-transformer-log-position",
-  "version": "0.5.3",
-  "description": "Injects the position of log statements into the log message",
+  "version": "0.5.4",
+  "description": "Injects the position of log statements into the log messages at build time",
   "author": "Matteias Collet <matteias.collet@bluewin.ch>",
   "main": "dist/index.js",
   "scripts": {
@@ -24,6 +24,12 @@
   },
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "transformer",
+    "typescript",
+    "logging",
+    "debug"
   ],
   "types": "./dist/index.d.ts",
   "homepage": "https://github.com/BitPatty/ts-transformer-log-position#readme",

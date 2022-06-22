@@ -1,10 +1,10 @@
 # ts-transformer-log-position
 
-A typescript transformer that injects the position of a log statement from the original source file into the respective log message at build time.
+A configurable typescript transformer that injects the position of a log statement from the original source file into the respective log message **at build time**, allowing you to trace back log messages without emitting, exposing or requiring source maps.
 
 ## Usage
 
-1. Use a compiler that supports transformers, such as [ttypescript](https://github.com/cevek/ttypescript)
+1. Use a compiler that allows you to use transformers (such as [ttypescript](https://github.com/cevek/ttypescript))
 2. Install the package `npm i @bitpatty/ts-transformer-log-position`
 3. Add the transformer to your `tsconfig.json`:
 
@@ -65,7 +65,6 @@ The plugin provides the configuration options below.
 Whether to split the arguments in the log statement. Defaults to `true`.
 
 ```typescript
-// split: true
 console.log('[src/sample.ts:0:0]', foo); // split: true
 console.log('[src/sample.ts:1:0]' + `${foo}`); // split: false
 ```

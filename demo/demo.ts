@@ -26,8 +26,6 @@ const edgeObj = {
 // Logs
 console.log();
 console.log('foo');
-// @ts-transformer-log-position ignore
-console.log('foo');
 console.log(`${c_stringLiteral}`);
 console.log(1);
 console.log(true);
@@ -107,11 +105,6 @@ console.log([] as string[]);
 console.log([] as unknown as string);
 console.log(((1 as number) + <number>3) / 3);
 console.log((): void => console.log('foo'));
-edgeObj.console.log('foo');
-// @ts-ignore
-const cpyA = console.log;
-// @ts-ignore
-const cpyB = console.log('foo');
 console.log(() => {
   console.log('foo');
 });
@@ -120,15 +113,15 @@ const globalLog = (msg: string) => console.log(msg);
 
 globalLog('foobar');
 
-const foo = {
+const logObj = {
   log: () => {},
   console: {
     log: () => {},
   },
 };
 
-foo.log();
-foo.console.log();
+logObj.log();
+logObj.console.log();
 
 class Foo {
   public logger: Foo;

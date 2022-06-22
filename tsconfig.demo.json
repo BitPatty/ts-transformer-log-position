@@ -17,7 +17,7 @@
           "foo.console.log"
         ],
         "transform": "./src/index.ts",
-        "split": false
+        "split": true
       }
     ]
   },
