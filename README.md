@@ -66,7 +66,7 @@ Whether to split the arguments in the log statement. Defaults to `true`.
 
 ```typescript
 console.log('[src/sample.ts:0:0]', foo); // split: true
-console.log('[src/sample.ts:1:0]' + `${foo}`); // split: false
+console.log('[src/sample.ts:1:0] ' + `${foo}`); // split: false
 ```
 
 ### `templateString`
