@@ -1,12 +1,12 @@
 # ts-transformer-log-position
 
-A configurable typescript transformer that injects the position of a log statement from the original source file into the respective log message **at build time**, allowing you to trace back log messages without emitting, exposing or requiring source maps.
+A configurable Typescript AST transformer that injects the position of a log statement from the original source file into the respective log message **at build time**, allowing you to trace back log messages without emitting, exposing or requiring source maps.
 
 ## Usage
 
 1. Use a compiler that allows you to use transformers (such as [ttypescript](https://github.com/cevek/ttypescript))
 2. Install the package `npm i @bitpatty/ts-transformer-log-position`
-3. Add the transformer to your `tsconfig.json`:
+3. For ttypescript users: Add the transformer to your `tsconfig.json`:
 
 ```
 {
@@ -20,6 +20,8 @@ A configurable typescript transformer that injects the position of a log stateme
   }
 }
 ```
+
+If you use a different compiler than ttypescript, refer to the respective documentation on how to apply transformers.
 
 ## Sample
 
