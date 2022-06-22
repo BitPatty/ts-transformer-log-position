@@ -52,7 +52,7 @@ console.log('foo'); // will be ignored
 
 ```typescript
 console.log('foo'); // will NOT be ignored
-// @ts-transformer-log-position disable
+// @ts-transformer-log-position ignore
 console.log('foo'); // will be ignored
 ```
 
