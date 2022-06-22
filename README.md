@@ -71,7 +71,7 @@ console.log('[src/sample.ts:1:0]' + `${foo}`); // split: false
 
 ### `templateString`
 
-The template string for the log prefix. Defaults to `"[{projectFilePath}:{line}:{character}] "`.
+The template string for the log prefix. Defaults to `"[{projectFilePath}:{line}:{character}]"`.
 
 The following placeholders are available:
 
@@ -80,8 +80,8 @@ The following placeholders are available:
 - `projectFilePath`: The absolute path to the file from the project root. The project root is auto-detected, but can be modified via the `projectRoot` option
 
 ```typescript
-console.log('[/workspace/src/sample.ts:0:0]', foo); // templateString: "[{absoluteFilePath} | L{line}C{character}] "
-console.log('/src/sample.ts, line 1', foo); // templateString: "{projectFilePath}, line {line} "
+console.log('[/workspace/src/sample.ts:0:0]', foo); // templateString: "[{projectFilePath}:{line}:{character}]"
+console.log('/src/sample.ts, line 1', foo); // templateString: "{projectFilePath}, line {line}"
 ```
 
 ### `expressions`
