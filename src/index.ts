@@ -1,4 +1,5 @@
 import ts from 'typescript';
+
 import {
   AccessTreeNode,
   TransformerConfig,
@@ -6,8 +7,6 @@ import {
 } from './tranformer.config';
 
 type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
-
-let transformerConfig: TransformerConfig;
 
 const IGNORE_FILE_PATTERN = '@ts-transformer-log-position disable';
 const IGNORE_LINE_PATTERN = '@ts-transformer-log-position ignore';
@@ -67,31 +66,29 @@ const scanForIgnoredLines = (sourceFile: ts.SourceFile): number[] => {
  *
  * @param absoluteFilePath  The file path
  * @param pos               The position of the log expression
+ * @param config            The transformer config
  * @param addSpace          Whether to add a trailing whitespace character
  * @returns                 The formatted prefix
  */
 const formatPrefix = (
   absoluteFilePath: string,
   pos: ts.LineAndCharacter,
+  config: TransformerConfig,
   addSpace?: boolean,
 ): string => {
   const fileName = absoluteFilePath.replace(/^.*[\\/]/, '');
 
   const projectFilePath =
-    transformerConfig.projectRoot &&
-    absoluteFilePath.startsWith(transformerConfig.projectRoot)
-      ? absoluteFilePath.replace(transformerConfig.projectRoot, '')
+    config.projectRoot && absoluteFilePath.startsWith(config.projectRoot)
+      ? absoluteFilePath.replace(config.projectRoot, '')
       : absoluteFilePath;
 
-  const lineNumber = transformerConfig.incrementLineNumber
-    ? pos.line + 1
-    : pos.line;
-
-  const charNumber = transformerConfig.incrementCharNumber
+  const lineNumber = config.incrementLineNumber ? pos.line + 1 : pos.line;
+  const charNumber = config.incrementCharNumber
     ? pos.character + 1
     : pos.character;
 
-  const interpolated = transformerConfig.templateString
+  const interpolated = config.templateString
     .replace('{absoluteFilePath}', absoluteFilePath)
     .replace('{projectFilePath}', projectFilePath.replace(/^\//, ''))
     .replace('{fileName}', fileName)
@@ -102,14 +99,14 @@ const formatPrefix = (
 };
 
 /**
- * Checks whether the specified expression ends up being a log
- * message in the property access tree
+ * Recursively checks whether the specified expression is one of
+ * the specified/configured log expressions
  *
  * @param exp   The current expression
  * @param node  The current node
  * @returns     True if the current expression is a leaf node
  */
-const matchesExpressionTree = (
+const matchesAccessTree = (
   exp: ts.PropertyAccessExpression | ts.CallExpression,
   node: AccessTreeNode | undefined,
 ): boolean => {
@@ -127,14 +124,15 @@ const matchesExpressionTree = (
   const subTree = node.children?.[exp.expression.name.escapedText.toString()];
   if (typeof subTree === 'undefined') return false;
 
-  return matchesExpressionTree(exp.expression, subTree);
+  return matchesAccessTree(exp.expression, subTree);
 };
 
 /**
  * Checks whether the specified node is a log expression
  *
- * @param node  The target node
- * @returns     True if the node is a log expression
+ * @param node    The target node
+ * @param config  The transformer config
+ * @returns       True if the node is a log expression
  */
 const isLogExpression = (
   node:
@@ -142,10 +140,11 @@ const isLogExpression = (
     | ts.CallExpression
     | ts.NewExpression
     | ts.ArrayLiteralExpression,
+  config: TransformerConfig,
 ): node is ts.CallExpression => {
-  if (!transformerConfig.accessTree) return false;
+  if (!config.accessTree) return false;
   if (!ts.isCallExpression(node)) return false;
-  return matchesExpressionTree(node, transformerConfig.accessTree);
+  return matchesAccessTree(node, config.accessTree);
 };
 
 /**
@@ -156,6 +155,7 @@ const isLogExpression = (
  * @param visitor     The visitor
  * @param context     The transformer context
  * @param position    The position of the log statement
+ * @param config      The transformer config
  * @returns           The transformed expression
  */
 const injectLineNumber = (
@@ -164,12 +164,13 @@ const injectLineNumber = (
   visitor: Visitor,
   context: ts.TransformationContext,
   position: ts.LineAndCharacter,
+  config: TransformerConfig,
 ): ts.Expression => {
   const visited = ts.visitEachChild(arg, visitor, context);
 
   return ts.factory.createBinaryExpression(
     ts.factory.createStringLiteral(
-      formatPrefix(sourceFile.fileName, position, true),
+      formatPrefix(sourceFile.fileName, position, config, true),
     ),
     ts.SyntaxKind.PlusToken,
     ts.isTemplateLiteral(visited) || ts.isStringLiteral(visited)
@@ -247,9 +248,13 @@ const isTypeOfExpression = (node: ts.Node): node is ts.TypeOfExpression => {
  * The transformer
  *
  * @param context  The transformation context
+ * @param config   The transformer config
  * @returns        The transformed source file
  */
-const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
+const transformer = (
+  context: ts.TransformationContext,
+  config: TransformerConfig,
+): ts.Transformer<ts.SourceFile> => {
   return (sourceFile) => {
     if (isFileIgnored(sourceFile)) {
       const visitor: Visitor = (n) => ts.visitEachChild(n, visitor, context);
@@ -263,12 +268,12 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
         node.getStart(),
       );
 
-      if (isLogExpression(node)) {
+      if (isLogExpression(node, config)) {
         if (ignoredLines.includes(nodePosition.line))
           return ts.visitEachChild(node, visitor, context);
 
         const prefix = ts.factory.createStringLiteral(
-          formatPrefix(sourceFile.fileName, nodePosition).trim(),
+          formatPrefix(sourceFile.fileName, nodePosition, config).trim(),
         );
 
         // No arguments
@@ -281,7 +286,7 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
           );
 
         // Move spreaded arguments to the second position
-        if (transformerConfig.split || ts.isSpreadElement(node.arguments[0])) {
+        if (config.split || ts.isSpreadElement(node.arguments[0])) {
           const visited = ts.visitEachChild(node, visitor, context);
 
           return ts.factory.updateCallExpression(
@@ -293,8 +298,7 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
         }
       }
 
-      if (transformerConfig.split)
-        return ts.visitEachChild(node, visitor, context);
+      if (config.split) return ts.visitEachChild(node, visitor, context);
 
       if (
         ts.isArrayLiteralExpression(node) ||
@@ -320,7 +324,7 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
         isTrueLiteral(node) ||
         isTypeOfExpression(node)
       ) {
-        if (!isLogExpression(node.parent))
+        if (!isLogExpression(node.parent, config))
           return ts.visitEachChild(node, visitor, context);
 
         const logPosition = sourceFile.getLineAndCharacterOfPosition(
@@ -341,6 +345,7 @@ const transformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
           visitor,
           context,
           logPosition,
+          config,
         );
       }
 
@@ -362,8 +367,8 @@ const transformerFactory = (
   program: ts.Program,
   config?: Partial<TransformerOptions>,
 ): ts.TransformerFactory<ts.SourceFile> => {
-  transformerConfig = new TransformerConfig(program, config);
-  return transformer;
+  const transformerConfig = new TransformerConfig(program, config);
+  return (ctx) => transformer(ctx, transformerConfig);
 };
 
 export default transformerFactory;
