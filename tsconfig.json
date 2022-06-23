@@ -2,8 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "es2020",
-    "target": "es2020",
-    "lib": ["es2020"],
+    "target": "es2017",
     "allowJs": false,
     "declaration": true,
     "emitDeclarationOnly": false,
