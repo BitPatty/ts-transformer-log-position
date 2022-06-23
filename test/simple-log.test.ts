@@ -1,11 +1,8 @@
-import {
-  createLogStatement,
-  createTemplateLiteral,
-  getConsoleIndex,
-} from './test-utils';
+import { createTemplateLiteral, applyTransformer } from './test-utils';
 
 test('console.log()', () => {
-  expect('console.log()').transformsInto('console.log("[index.ts:0:0]");');
+  const transformed = applyTransformer('console.log()');
+  expect(transformed).toContain('console.log("[index.ts:0:0]");');
 });
 
 const testSet = [
@@ -27,41 +24,26 @@ const testSet = [
   ['{ foo: 1 }', true],
 ];
 
-describe('Split', () => {
-  test.each(testSet)('console.log(%s)', (str: string, _) => {
-    expect(createLogStatement(str)).transformsInto(
-      `console.log("[index.ts:0:0]", ${str});`,
+describe('Simple Log', () => {
+  test.each(testSet)('No Split | console.log(%s)', (str: string, _) => {
+    const transformed = applyTransformer(`console.log(${str})`, {
+      split: false,
+    });
+
+    expect(transformed).toContain(
+      `console.log("[index.ts:0:0] " + ${
+        str.startsWith('"') || str.startsWith("'")
+          ? str
+          : createTemplateLiteral(str)
+      })`,
     );
   });
 
-  test.each(testSet)('console.log(myVar) (is %s)', (str) => {
-    const srcStr = `const myVar = ${str}; ${createLogStatement('myVar')}`;
-    expect(srcStr).transformsInto(
-      `const myVar = ${str};\nconsole.log("[index.ts:0:${srcStr.indexOf(
-        'console',
-      )}]", myVar);`,
-    );
-  });
-});
+  test.each(testSet)('Split | console.log(%s)', (str: string, _) => {
+    const transformed = applyTransformer(`console.log(${str})`, {
+      split: true,
+    });
 
-describe('No Split', () => {
-  test.each(testSet)('console.log(%s)', (str: string, wrap) => {
-    const wrapped = wrap ? createTemplateLiteral(str) : str;
-    expect(`console.log(${str})`).transformsInto(
-      `console.log("[index.ts:0:0] " + ${wrapped});`,
-      { split: false },
-    );
-  });
-
-  test.each(testSet)('console.log(myVar) (is %s)', (str) => {
-    const srcStr = `const myVar = ${str}; ${createLogStatement('myVar')}`;
-    expect(srcStr).transformsInto(
-      `const myVar = ${str};\n${createLogStatement(
-        `"[index.ts:0:${getConsoleIndex(srcStr)}] " + ${createTemplateLiteral(
-          'myVar',
-        )}`,
-      )}`,
-      { split: false },
-    );
+    expect(transformed).toContain(`console.log("[index.ts:0:0]", ${str})`);
   });
 });

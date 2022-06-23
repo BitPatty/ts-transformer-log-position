@@ -1,51 +1,39 @@
+import { applyTransformer } from './test-utils';
+
 describe('Ignores', () => {
   test('Ignores Line', () => {
-    expect(`
-      // @ts-transformer-log-position ignore
-      console.log('foo');
-    `).transformsInto(
-      `
-      // @ts-transformer-log-position ignore
-      console.log('foo');
-      `,
-    );
+    const lines = [
+      'console.log("test1")',
+      '// @ts-transformer-log-position ignore',
+      'console.log("test2")',
+      'console.log("test3")',
+    ];
+
+    const transformed = applyTransformer(lines.join('\n'));
+
+    expect(transformed).not.toContain('console.log("test1")');
+    expect(transformed).toContain('console.log("[index.ts:0:0]", "test1")');
+
+    expect(transformed).toContain('console.log("test2")');
+    expect(transformed).not.toContain(', "test2")');
+
+    expect(transformed).not.toContain('console.log("test3")');
+    expect(transformed).toContain('console.log("[index.ts:3:0]", "test3")');
   });
 
-  test('Only ignores next Line', () => {
-    expect(`
-      console.log('foo');
-      // @ts-transformer-log-position ignore
-      console.log('foo');
-      console.log('foo');
-      // @ts-transformer-log-position ignore
-      console.log('foo');
-      console.log('foo');
-    `).transformsInto(
-      `
-      console.log("test", 'foo');
-      // @ts-transformer-log-position ignore
-      console.log('foo');
-      console.log("test", 'foo');
-      // @ts-transformer-log-position ignore
-      console.log('foo');
-      console.log("test", 'foo');
-          `,
-      {
-        templateString: 'test',
-      },
-    );
-  });
+  test('Ignores File', () => {
+    const lines = [
+      '// @ts-transformer-log-position disable',
+      'console.log("test1")',
+      'console.log("test2")',
+    ];
 
-  test('Ignores entire file', () => {
-    expect(`
-    // @ts-transformer-log-position disable
-    console.log('foo1');
-    console.loG('foo2');   
-    
-    `).transformsInto(`
-    // @ts-transformer-log-position disable
-    console.log('foo1');
-    console.loG('foo2');   
-    `);
+    const transformed = applyTransformer(lines.join('\n'));
+
+    expect(transformed).toContain('console.log("test1")');
+    expect(transformed).not.toContain(', "test1")');
+
+    expect(transformed).toContain('console.log("test2")');
+    expect(transformed).not.toContain(', "test2")');
   });
 });

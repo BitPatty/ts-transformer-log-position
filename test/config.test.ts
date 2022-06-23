@@ -1,153 +1,119 @@
-import { createLogStatement } from './test-utils';
+import { applyTransformer } from './test-utils';
 
 describe('Config', () => {
   test('Custom Template String', () => {
-    expect(createLogStatement('"test"')).transformsInto(
-      'console.log("[Line 0, Character 0]", "test");',
-      {
-        templateString: '[Line {line}, Character {character}]',
-      },
+    const transformed = applyTransformer('console.log("test")', {
+      templateString: '[Line {line}, Character {character}]',
+    });
+
+    expect(transformed).toContain(
+      'console.log("[Line 0, Character 0]", "test")',
     );
   });
 
   test('Custom Logger', () => {
-    expect(`
-class Logger {
-    public log(msg: string) {
-        console.log(msg);
-    }
-}
+    const transformed = applyTransformer('Logger.log("test")', {
+      expressions: 'Logger.log',
+    });
 
-Logger.log("test");
-`).transformsInto(
-      `
-class Logger {
-    log(msg) {
-        console.log(msg);
-    }
-}
-
-Logger.log("[index.ts:7:0]", "test");`,
-      {
-        expressions: 'Logger.log',
-      },
-    );
+    expect(transformed).toContain('Logger.log("[index.ts:0:0]", "test")');
   });
 
-  test('Nested Logger Function', () => {
-    expect(`
-class Logger {
-    public print = {
-        log(msg: string) {
-            console.log(msg);
-        }
-    }
-}
+  test('Property Access Chain Logger', () => {
+    const transformed = applyTransformer('foo.bar.log("test")', {
+      expressions: 'foo.bar.log',
+    });
 
-Logger.print.log("test");
-`).transformsInto(
-      `
-class Logger {
-    print = {
-        log(msg) {
-            console.log(msg);
-        }
-    };
-}
+    expect(transformed).toContain('foo.bar.log("[index.ts:0:0]", "test")');
+  });
 
-Logger.print.log("[index.ts:9:0]", "test");`,
-      {
-        expressions: 'Logger.print.log',
-      },
-    );
+  test('Property Access Chain Logger With `this` Keyword', () => {
+    const transformed = applyTransformer('this.logger.log("test")', {
+      expressions: 'this.logger.log',
+    });
+
+    expect(transformed).toContain('this.logger.log("[index.ts:0:0]", "test")');
   });
 
   test('Global Logger', () => {
-    expect(`
-const log = (msg: string) => {
-  console.log(msg)
-};
-log()
-    `).transformsInto(
-      `
-const log = (msg) => {
-    console.log(msg);
-};
-log("[index.ts:4:0]");
-      `,
-      {
-        expressions: 'log',
-      },
-    );
+    const transformed = applyTransformer('foo("test")', {
+      expressions: 'foo',
+    });
+
+    expect(transformed).toContain('foo("[index.ts:0:0]", "test")');
   });
 
-  test('Multiple Log Statements', () => {
-    expect(`
-class Logger {
-    public static log(msg?: string) {
-        console.log(msg);
-    }
+  test('Multiple Loggers', () => {
+    const lines = [
+      'error("test")',
+      'Logger.log("test")',
+      'Logger.log.error("test")',
+      'console.log("test")',
+      'console.warn("test")',
+      'console.error("test")',
+    ];
 
-    public warn(msg?: string) {
-        console.warn(msg);
-    }
+    const transformed = applyTransformer(lines.join('\n'), {
+      expressions: [
+        'error',
+        'console.log',
+        'console.warn',
+        'Logger.log',
+        'Logger.log.error',
+      ],
+    });
 
-    public error(msg) {
-        console.error(msg);
-    }
-}
+    expect(transformed).toContain('error("[index.ts:0:0]", "test")');
+    expect(transformed).toContain('Logger.log("[index.ts:1:0]", "test")');
+    expect(transformed).toContain('Logger.log.error("[index.ts:2:0]", "test")');
+    expect(transformed).toContain('console.log("[index.ts:3:0]", "test")');
+    expect(transformed).toContain('console.warn("[index.ts:4:0]", "test")');
+    expect(transformed).not.toContain('console.error("[index.ts');
+  });
 
-const error = (msg?: string) => console.error(msg)
+  test('Mutiple Log Statements', () => {
+    const lines = [
+      'console.log("test1")',
+      'console.log("test2")',
+      'console.error("test3")',
+    ];
 
-Logger.log("Test");
-console.log();
-error("Test");
-`).transformsInto(
-      `
-class Logger {
-  static log(msg) {
-      console.log(msg);
-  }
+    const transformed = applyTransformer(lines.join('\n'));
 
-  warn(msg) {
-      console.warn("[index.ts:7:8]", msg);
-  }
-
-  error(msg) {
-      console.error("[index.ts:11:8]", msg);
-  }
-}
-
-const error = (msg) => console.error("[index.ts:15:32]", msg);
-
-Logger.log("[index.ts:17:0]", "Test");
-console.log();
-error("[index.ts:19:0]", "Test");
-
-`,
-      {
-        expressions: ['Logger.log', 'console.warn', 'error', 'console.error'],
-      },
-    );
+    expect(transformed).toContain('console.log("[index.ts:0:0]", "test1")');
+    expect(transformed).toContain('console.log("[index.ts:1:0]", "test2")');
+    expect(transformed).toContain('console.error("[index.ts:2:0]", "test3")');
   });
 
   test('Increment Line Number', () => {
-    expect(createLogStatement('"test"')).transformsInto(
-      'console.log("1", "test");',
-      {
-        templateString: '{line}',
-        incrementLineNumber: true,
-      },
-    );
+    const lines = [
+      'console.log("test1")',
+      'console.log("test2")',
+      'console.log("test3")',
+    ];
+
+    const transformed = applyTransformer(lines.join('\n'), {
+      incrementLineNumber: true,
+    });
+
+    expect(transformed).toContain('console.log("[index.ts:1:0]", "test1")');
+    expect(transformed).toContain('console.log("[index.ts:2:0]", "test2")');
+    expect(transformed).toContain('console.log("[index.ts:3:0]", "test3")');
   });
 
-  test('Increment Char Number', () => {
-    expect(createLogStatement('"test"')).transformsInto(
-      'console.log("01", "test");',
-      {
-        templateString: '{line}{character}',
-        incrementCharNumber: true,
-      },
-    );
+  test('Increment CChar Number', () => {
+    const lines = [
+      '  console.log("test1")',
+      ' console.log("test2")',
+      'console.log("test3")',
+    ];
+
+    const transformed = applyTransformer(lines.join('\n'), {
+      incrementCharNumber: true,
+    });
+
+    expect(transformed).toContain('console.log("[index.ts:0:3]", "test1")');
+    expect(transformed).toContain('console.log("[index.ts:1:2]", "test2")');
+    expect(transformed).toContain('console.log("[index.ts:2:1]", "test3")');
   });
 });

@@ -10,7 +10,7 @@
     "docs": "typedoc src/index.ts",
     "format": "prettier --write \"{src,test}/**/*.ts\" ",
     "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
-    "pretest": "jest --clearCache",
+    "pretest": "npm run build && jest --clearCache",
     "test": "jest --verbose --runInBand --coverage",
     "demo": "ttsc --project tsconfig.demo.json"
   },
@@ -55,6 +55,6 @@
     "typescript": "4.7.4"
   },
   "peerDependencies": {
-    "typescript": ">=4.0.2"
+    "typescript": ">=4.3.2"
   }
 }

@@ -1,4 +1,4 @@
-import { createLogStatement, createTemplateLiteral } from './test-utils';
+import { applyTransformer, createTemplateLiteral } from './test-utils';
 
 const testSet = [
   ['1 + 1'],
@@ -14,19 +14,18 @@ const testSet = [
 ];
 describe('Split', () => {
   test.each(testSet)('console.log(%s)', (str) => {
-    expect(createLogStatement(str)).transformsInto(
-      `console.log("[index.ts:0:0]", ${str});`,
-    );
+    const transformed = applyTransformer(`console.log(${str})`);
+    expect(transformed).toContain(`("[index.ts:0:0]", ${str})`);
   });
 });
 
 describe('No Split', () => {
   test.each(testSet)('console.log(%s)', (str) => {
-    expect(createLogStatement(str)).transformsInto(
-      `console.log("[index.ts:0:0] " + ${createTemplateLiteral(str)});`,
-      {
-        split: false,
-      },
+    const transformed = applyTransformer(`console.log(${str})`, {
+      split: false,
+    });
+    expect(transformed).toContain(
+      `("[index.ts:0:0] " + ${createTemplateLiteral(str)}`,
     );
   });
 });
