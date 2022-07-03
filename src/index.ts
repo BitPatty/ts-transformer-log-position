@@ -148,17 +148,17 @@ const isLogExpression = (
 };
 
 /**
- * Injects the line number into a log expression
+ * Injects the log position into a log expression
  *
  * @param arg         The log expression
  * @param sourceFile  The source file
  * @param visitor     The visitor
  * @param context     The transformer context
- * @param position    The position of the log statement
+ * @param position    The position of the log expression
  * @param config      The transformer config
  * @returns           The transformed expression
  */
-const injectLineNumber = (
+const injectLogPosition = (
   arg: ts.Expression,
   sourceFile: ts.SourceFile,
   visitor: Visitor,
@@ -339,7 +339,7 @@ const transformer = (
         if (!firstArgument || firstArgument.pos !== node.pos)
           return ts.visitEachChild(node, visitor, context);
 
-        return injectLineNumber(
+        return injectLogPosition(
           node,
           sourceFile,
           visitor,

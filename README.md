@@ -56,6 +56,7 @@ console.log('foo'); // will be ignored
 console.log('foo'); // will NOT be ignored
 // @ts-transformer-log-position ignore
 console.log('foo'); // will be ignored
+console.log('foo'); // will NOT be ignored
 ```
 
 ## Configuration
@@ -82,8 +83,9 @@ The following placeholders are available:
 - `projectFilePath`: The absolute path to the file from the project root. The project root is auto-detected, but can be modified via the `projectRoot` option
 
 ```typescript
-console.log('[/workspace/src/sample.ts:0:0]', foo); // templateString: "[{projectFilePath}:{line}:{character}]"
-console.log('/src/sample.ts, line 1', foo); // templateString: "{projectFilePath}, line {line}"
+console.log('[/workspace/src/sample.ts:0:0]', foo); // templateString: "[{absoluteFilePath}:{line}:{character}]"
+console.log('src/sample.ts, line 1', foo); // templateString: "{projectFilePath}, line {line}"
+console.log('sample.ts, line 1', foo); // templateString: "{fileName}, line {line}"
 ```
 
 ### `expressions`
