@@ -11,8 +11,7 @@
     "format": "prettier --write \"{src,test}/**/*.ts\" ",
     "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
     "pretest": "npm run build && jest --clearCache",
-    "test": "jest --verbose --runInBand --coverage",
-    "demo": "ttsc --project tsconfig.demo.json"
+    "test": "jest --verbose --runInBand --coverage"
   },
   "repository": {
     "type": "git",
