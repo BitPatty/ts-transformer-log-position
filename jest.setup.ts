@@ -15,7 +15,6 @@ declare global {
 expect.extend({});
 
 // Parse module kind
-
 const tsModule = process.env.JEST_TS_MODULE_KIND?.toUpperCase();
 if (!tsModule) throw new Error('Missing JEST_TS_MODULE_KIND configuration');
 if (!Object.entries(ts.ModuleKind).some((k) => k[0] === tsModule))
