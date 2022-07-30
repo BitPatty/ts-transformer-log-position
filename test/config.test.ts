@@ -101,7 +101,7 @@ describe('Config', () => {
     expect(transformed).toContain('console.log("[index.ts:3:0]", "test3")');
   });
 
-  test('Increment CChar Number', () => {
+  test('Increment Char Number', () => {
     const lines = [
       '  console.log("test1")',
       ' console.log("test2")',

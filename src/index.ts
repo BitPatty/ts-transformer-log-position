@@ -4,7 +4,7 @@ import {
   AccessTreeNode,
   TransformerConfig,
   TransformerOptions,
-} from './tranformer.config';
+} from './transformer.config';
 
 type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
 
