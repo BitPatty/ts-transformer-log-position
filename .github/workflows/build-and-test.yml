@@ -33,6 +33,7 @@ jobs:
         typescript:
           - '4.3.2'
           - '4.7.4'
+          - '4.8.2'
         modulekind:
           - 'es2015'
           - 'es2020'
