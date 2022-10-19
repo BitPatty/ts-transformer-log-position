@@ -20,5 +20,5 @@
     "resolveJsonModule": true
   },
   "include": ["src/**/*", "test/**/*", "./*.ts"],
-  "exclude": ["node_modules", "dist", "rollup.config.js"]
+  "exclude": ["node_modules", "dist", "rollup.config.mjs"]
 }
