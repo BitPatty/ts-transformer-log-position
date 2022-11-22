@@ -43,7 +43,7 @@
     "eslint-plugin-jest": "27.1.5",
     "eslint-plugin-prettier": "4.2.1",
     "jest-diff": "29.3.1",
-    "npm-check-updates": "16.4.1",
+    "npm-check-updates": "16.4.2",
     "prettier": "2.7.1",
     "rimraf": "3.0.2",
     "rollup": "3.3.0",
