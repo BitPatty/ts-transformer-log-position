@@ -1,4 +1,4 @@
-name: Build And Test
+name: Future
 
 on: push
 
@@ -17,7 +17,7 @@ jobs:
       - run: npm run build
       - uses: actions/upload-artifact@master
         with:
-          name: build-artifact
+          name: build-future
           path: dist
           retention-days: 1
   test:
@@ -28,16 +28,13 @@ jobs:
       fail-fast: false
       matrix:
         node:
-          - '16.0.0' # Min supported version
-          - '18.12.1' # Max supported version
+          - '19.2.0'
         typescript:
-          - '4.3.2' # Min supported version
-          - '4.8.4' # Max supported version
+          - 'latest' # Current version
+          - 'next' # Next version
         modulekind:
-          - 'es2015'
           - 'es2020'
         scriptversion:
-          - 'es2015'
           - 'es2020'
     env:
       JEST_TS_MODULE_KIND: ${{ matrix.modulekind }}
@@ -47,7 +44,7 @@ jobs:
       - name: Retrieve artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-artifact
+          name: build-future
           path: dist
       - uses: actions/setup-node@v2
         with:
@@ -56,7 +53,7 @@ jobs:
       - run: rm package.json
       - run: rm package-lock.json
       - run: |
-          npm install \
+          npm install --force \
             typescript@${{ matrix.typescript }} \
             @typescript/vfs \
             @types/node \
