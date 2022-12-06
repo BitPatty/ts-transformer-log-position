@@ -28,28 +28,19 @@ jobs:
       fail-fast: false
       matrix:
         node:
-          - '16.0.0'
-          - '18.4.0'
+          - '16.0.0'   # Min supported version
+          - '18.12.1'  # Max supported version
         typescript:
-          - '4.3.2'
-          - '4.8.2'
-          - '4.9.3'
+          - '4.3.2'    # Min supported version
+          - '4.8.4'    # Max supported version
+          - 'latest'   # Current version
+          - 'next'     # Next version
         modulekind:
           - 'es2015'
           - 'es2020'
         scriptversion:
           - 'es2015'
-          - 'es2017'
           - 'es2020'
-        # include:
-        #   - node: '16.13.1'
-        #     typescript: '4.7.4'
-        #     modulekind: 'es2022'
-        #     scriptversion: 'es2022'
-        #   - node: '18.4.0'
-        #     typescript: '4.7.4'
-        #     modulekind: 'es2022'
-        #     scriptversion: 'es2022'
     env:
       JEST_TS_MODULE_KIND: ${{ matrix.modulekind }}
       JEST_TS_SCRIPT_TARGET: ${{ matrix.scriptversion }}
