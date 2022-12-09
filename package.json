@@ -33,7 +33,7 @@
   "types": "./dist/index.d.ts",
   "homepage": "https://github.com/BitPatty/ts-transformer-log-position#readme",
   "devDependencies": {
-    "@types/jest": "29.2.3",
+    "@types/jest": "29.2.4",
     "@types/node": "18.11.10",
     "@typescript-eslint/eslint-plugin": "5.46.0",
     "@typescript-eslint/parser": "5.46.0",
