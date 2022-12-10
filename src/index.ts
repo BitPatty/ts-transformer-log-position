@@ -23,6 +23,7 @@ const isFileIgnored = (sourceFile: ts.SourceFile): boolean => {
   const lines = fileContent.split('\n');
 
   let isCommentBlock = false;
+
   for (let i = 0; i < lines.length; i++) {
     const trimmedLine = lines[i].trim();
     if (trimmedLine.includes(IGNORE_FILE_PATTERN)) return true;

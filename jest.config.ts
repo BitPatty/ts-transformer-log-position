@@ -8,10 +8,14 @@ export default (): Config.InitialOptions => {
     setupFilesAfterEnv: ['./jest.setup.ts'],
     verbose: true,
     testMatch: ['**/*.test.ts'],
-    globals: {
-      'ts-jest': {
-        compiler: 'ttypescript',
-      },
+    transform: {
+      '^.+\\.tsx?$': [
+        'ts-jest',
+        {
+          compiler: 'ttypescript',
+          tsconfig: 'tsconfig.json',
+        },
+      ],
     },
   };
 };
