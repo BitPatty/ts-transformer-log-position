@@ -39,13 +39,7 @@ const applyTransformer = (
 
   const fsMap = createDefaultMapFromNodeModules(compilerOptions);
 
-  const filteredLibs = tsLibs.filter((l) =>
-    l
-      .toLowerCase()
-      .includes(process.env.JEST_TRANSFORMER_SCRIPT_TARGET!.toLowerCase()),
-  );
-
-  for (const lib of filteredLibs)
+  for (const lib of tsLibs)
     fsMap.set(`/${lib}`, readFileSync(join(tsDir, lib), 'utf8'));
 
   fsMap.set('index.ts', source);
