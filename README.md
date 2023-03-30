@@ -4,9 +4,9 @@ A configurable Typescript AST transformer that injects the position of a log sta
 
 ## Usage
 
-1. Use a compiler that allows you to use transformers (such as [ttypescript](https://github.com/cevek/ttypescript))
+1. Use a compiler that allows you to use transformers (such as [ts-patch](https://github.com/nonara/ts-patch))
 2. Install the package `npm i --save-dev @bitpatty/ts-transformer-log-position`
-3. For ttypescript users: Add the transformer to your `tsconfig.json`:
+3. For ts-patch users: Add the transformer to your `tsconfig.json`:
 
 ```
 {
@@ -21,7 +21,7 @@ A configurable Typescript AST transformer that injects the position of a log sta
 }
 ```
 
-If you use a different compiler than ttypescript, refer to the respective documentation on how to apply transformers.
+If you use a different compiler than ts-patch, refer to the respective documentation on how to apply transformers.
 
 ## Sample
 

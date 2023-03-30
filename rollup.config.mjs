@@ -1,7 +1,6 @@
 import pkg from './package.json' assert { type: 'json' };
 
 import typescript from 'rollup-plugin-typescript2';
-import ttypescript from 'ttypescript';
 
 export default {
   input: 'src/index.ts',
@@ -17,7 +16,6 @@ export default {
   ],
   plugins: [
     typescript({
-      typescript: ttypescript,
       tsconfig: 'tsconfig.build.json',
       transformers: [],
     }),

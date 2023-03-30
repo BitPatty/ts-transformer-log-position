@@ -59,7 +59,7 @@ jobs:
             @types/node \
             @types/jest \
             ts-jest \
-            ttypescript \
+            ts-patch \
             ts-node \
             tslib
       - run: cat package.json

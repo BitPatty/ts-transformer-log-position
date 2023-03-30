@@ -9,13 +9,7 @@ export default (): Config.InitialOptions => {
     verbose: true,
     testMatch: ['**/*.test.ts'],
     transform: {
-      '^.+\\.tsx?$': [
-        'ts-jest',
-        {
-          compiler: 'ttypescript',
-          tsconfig: 'tsconfig.json',
-        },
-      ],
+      '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
     },
   };
 };
