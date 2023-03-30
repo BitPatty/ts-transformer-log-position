@@ -105,3 +105,40 @@ console.log('[src/sample.ts:6:0]', foo);
 ### `incrementLineNumber` / `incrementCharNumber`
 
 Adds +1 to each line / character number to match the numbering of common editors (starting from 1 instead of 0). Defaults to `false`.
+
+### `argsToJson` / `stringArgsToJson`
+
+If `argsToJson` is true, the log arguments are wrapped in a JSON stringify. It omit strings and template expressions unless `stringArgsToJson` is `true`. Defaults to `false` / `false`.
+
+Examples:
+
+```typescript
+// argsToJson: true
+
+// in
+console.log(foo);
+// out
+console.log('[src/sample.ts:0:0] ' + JSON.stringify(foo));
+
+// in
+console.log(1 + 1);
+// out
+console.log('[src/sample.ts:0:0] ' + JSON.stringify(1 + 1));
+
+// in
+console.log(...foo);
+// out
+console.log(
+  '[src/sample.ts:0:0] ',
+  ...foo.map((__ttlp__v_0) => JSON.stringify(__ttlp__v_)),
+);
+
+// in
+console.log(a, b, c);
+// out
+console.log(
+  '[src/sample.ts:0:0] ' + JSON.stringify(a),
+  JSON.stringify(b),
+  JSON.stringify(c),
+);
+```

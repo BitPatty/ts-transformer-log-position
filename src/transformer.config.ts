@@ -8,6 +8,8 @@ export type TransformerOptions = {
   incrementCharNumber: boolean;
   incrementLineNumber: boolean;
   split: boolean;
+  argsToJson: boolean;
+  stringArgsToJson: boolean;
 };
 
 // The access tree is a reverse tree based on the order of property access
@@ -53,6 +55,9 @@ export class TransformerConfig {
   public readonly incrementLineNumber: boolean;
   public readonly split: boolean;
 
+  public readonly argsToJson: boolean;
+  public readonly stringArgsToJson: boolean;
+
   public constructor(
     program: ts.Program,
     options?: Partial<TransformerOptions>,
@@ -72,9 +77,11 @@ export class TransformerConfig {
                   options?.expressions ?? defaultOptions.expressions,
                 );
           break;
+        case 'argsToJson':
         case 'incrementCharNumber':
         case 'incrementLineNumber':
         case 'split':
+        case 'stringArgsToJson':
           this[key] = options?.[key] ?? defaultOptions[key];
           break;
         case 'projectRoot':
@@ -107,7 +114,7 @@ export class TransformerConfig {
   #validateOptions(options?: Partial<TransformerOptions>): void {
     if (!options) return;
 
-    for (const key of Object.keys(options)) {
+    for (const key of Object.keys(options) as Array<keyof TransformerOptions>) {
       const err = `Invalid configuration for '${key}'`;
       switch (key) {
         case 'expressions':
@@ -126,9 +133,11 @@ export class TransformerConfig {
         case 'templateString':
           assert(this.#isMeaningfulString(options[key]), err);
           break;
+        case 'argsToJson':
         case 'incrementCharNumber':
         case 'incrementLineNumber':
         case 'split':
+        case 'stringArgsToJson':
           assert(typeof options[key] === 'boolean', err);
           break;
         default:
@@ -159,6 +168,8 @@ export class TransformerConfig {
       projectRoot: program.getCurrentDirectory(),
       incrementCharNumber: false,
       incrementLineNumber: false,
+      argsToJson: false,
+      stringArgsToJson: false,
     };
   }
 
