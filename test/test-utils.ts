@@ -32,8 +32,15 @@ const applyTransformer = (
     throw new Error('Missing module kind');
 
   const compilerOptions = {
-    module: ts.ModuleKind[process.env.JEST_TRANSFORMER_MODULE_KIND],
-    target: ts.ScriptTarget[process.env.JEST_TRANSFORMER_SCRIPT_TARGET],
+    module:
+      ts.ModuleKind[
+        process.env.JEST_TRANSFORMER_MODULE_KIND as keyof typeof ts.ModuleKind
+      ],
+    target:
+      ts.ScriptTarget[
+        process.env
+          .JEST_TRANSFORMER_SCRIPT_TARGET as keyof typeof ts.ScriptTarget
+      ],
     moduleResolution: ts.ModuleResolutionKind.NodeJs,
   };
 
