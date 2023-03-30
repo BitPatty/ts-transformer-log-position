@@ -8,8 +8,8 @@ jobs:
     name: Lint and Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '18.4.0'
       - run: npm install
@@ -43,13 +43,13 @@ jobs:
       JEST_TS_MODULE_KIND: ${{ matrix.modulekind }}
       JEST_TS_SCRIPT_TARGET: ${{ matrix.scriptversion }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Retrieve artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build-artifact
           path: dist
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - run: rm -rf node_modules
