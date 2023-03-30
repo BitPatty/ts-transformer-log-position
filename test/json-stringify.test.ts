@@ -123,6 +123,28 @@ describe('JSON Stringify', () => {
     );
   });
 
+  test('Split | Multiple Spreaded Arguments', () => {
+    const transformed = applyTransformer(
+      `const foobar = [1, 2, 3];\nconsole.log(...foobar);\nconsole.log(...foobar);`,
+      {
+        split: true,
+        argsToJson: true,
+      },
+    );
+
+    expect(transformed).toContain(
+      encloseArrowFunctionParameters
+        ? `console.log("[index.ts:1:0]", ...foobar.map((__ttlp__v_1) => JSON.stringify(__ttlp__v_1)))`
+        : `console.log("[index.ts:1:0]", ...foobar.map(__ttlp__v_1 => JSON.stringify(__ttlp__v_1)))`,
+    );
+
+    expect(transformed).toContain(
+      encloseArrowFunctionParameters
+        ? `console.log("[index.ts:2:0]", ...foobar.map((__ttlp__v_2) => JSON.stringify(__ttlp__v_2)))`
+        : `console.log("[index.ts:2:0]", ...foobar.map(__ttlp__v_2 => JSON.stringify(__ttlp__v_2)))`,
+    );
+  });
+
   test('No Split | Multiple Args', () => {
     const transformed = applyTransformer(
       `const [a, b, c] = [1, 2, 3];\nconsole.log(a, b, c)`,
