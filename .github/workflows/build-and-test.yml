@@ -69,3 +69,6 @@ jobs:
       - run: npx jest --verbose --runInBand --coverage
       - name: Coveralls
         uses: coverallsapp/github-action@v1
+        with:
+          parallel: true
+          flag-name: run ${{ join(matrix.*, ' - ') }}
