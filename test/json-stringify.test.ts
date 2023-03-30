@@ -1,4 +1,12 @@
 import { applyTransformer } from './test-utils';
+import * as ts from 'typescript';
+
+const [majorVersion, minorVersion] = ts.versionMajorMinor.split('.');
+
+const encloseArrowFunctionParameters =
+  majorVersion === '4' && minorVersion === '3';
+
+ts.version;
 
 test('console.log()', () => {
   const transformed = applyTransformer('console.log()');
@@ -93,7 +101,9 @@ describe('JSON Stringify', () => {
     );
 
     expect(transformed).toContain(
-      `console.log("[index.ts:1:0]", ...foobar.map(__ttlp__v_1 => JSON.stringify(__ttlp__v_1)))`,
+      encloseArrowFunctionParameters
+        ? `console.log("[index.ts:1:0]", ...foobar.map((__ttlp__v_1) => JSON.stringify(__ttlp__v_1)))`
+        : `console.log("[index.ts:1:0]", ...foobar.map(__ttlp__v_1 => JSON.stringify(__ttlp__v_1)))`,
     );
   });
 
@@ -107,7 +117,9 @@ describe('JSON Stringify', () => {
     );
 
     expect(transformed).toContain(
-      `console.log("[index.ts:1:0]", ...foobar.map(__ttlp__v_1 => JSON.stringify(__ttlp__v_1)))`,
+      encloseArrowFunctionParameters
+        ? `console.log("[index.ts:1:0]", ...foobar.map((__ttlp__v_1) => JSON.stringify(__ttlp__v_1)))`
+        : `console.log("[index.ts:1:0]", ...foobar.map(__ttlp__v_1 => JSON.stringify(__ttlp__v_1)))`,
     );
   });
 
