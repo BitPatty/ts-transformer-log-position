@@ -5,7 +5,7 @@
   "author": "Matteias Collet <matteias.collet@bluewin.ch>",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "ts-patch install",
+    "postinstall": "ts-patch install -s",
     "prepare": "ts-patch install -s",
     "build": "rimraf dist && rollup -c",
     "deps:force-upgrade": "npm-check-updates -u && rm -rf node_modules && rm -f package-lock.json && npm i",

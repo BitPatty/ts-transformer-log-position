@@ -30,6 +30,7 @@
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/explicit-member-accessibility": ["error"],
     "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
     "no-console": ["error"],
     "no-return-await": ["error"],
     "require-await": ["error"],

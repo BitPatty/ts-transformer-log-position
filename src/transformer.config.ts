@@ -60,18 +60,27 @@ export class TransformerConfig {
     this.#validateOptions(options);
     const defaultOptions = this.#buildDefaultOptions(program);
 
-    for (const key of Object.keys(defaultOptions)) {
+    for (const key of Object.keys(defaultOptions) as Array<
+      keyof TransformerOptions
+    >) {
       switch (key) {
         case 'expressions':
-          if (typeof options?.expressions === 'string')
-            this.accessTree = this.#buildAccessTree([options.expressions]);
-          else
-            this.accessTree = this.#buildAccessTree(
-              options?.expressions ?? defaultOptions.expressions,
-            );
+          this.accessTree =
+            typeof options?.expressions === 'string'
+              ? this.#buildAccessTree([options.expressions])
+              : this.#buildAccessTree(
+                  options?.expressions ?? defaultOptions.expressions,
+                );
           break;
-        default:
+        case 'incrementCharNumber':
+        case 'incrementLineNumber':
+        case 'split':
           this[key] = options?.[key] ?? defaultOptions[key];
+          break;
+        case 'projectRoot':
+        case 'templateString':
+          this[key] = options?.[key] ?? defaultOptions[key];
+          break;
       }
     }
   }
@@ -171,7 +180,7 @@ export class TransformerConfig {
       return [current, next.join('.')] as [string, string];
     });
 
-    const res = {
+    const res: Required<AccessTreeNode> = {
       leaf: val.some((v) => v.length === 0),
       children: {},
     };
