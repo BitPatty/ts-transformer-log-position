@@ -67,3 +67,5 @@ jobs:
             tslib
       - run: cat package.json
       - run: npx jest --verbose --runInBand --coverage
+      - name: Coveralls
+        uses: coverallsapp/github-action@v1

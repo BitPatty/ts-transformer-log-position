@@ -133,7 +133,29 @@ describe('JSON Stringify', () => {
     );
   });
 
-  test('No Split | No Nested Wraps', () => {
+  test('No Split | No Nested Wraps | First Arg', () => {
+    const transformed = applyTransformer(
+      `const [a, b, c] = [1, 2, 3];\nconsole.log(JSON.stringify(a), b, c)`,
+      { argsToJson: true, split: false },
+    );
+
+    expect(transformed).toContain(
+      `console.log("[index.ts:1:0] " + JSON.stringify(a), JSON.stringify(b), JSON.stringify(c))`,
+    );
+  });
+
+  test('Split | No Nested Wraps | First Arg', () => {
+    const transformed = applyTransformer(
+      `const [a, b, c] = [1, 2, 3];\nconsole.log(JSON.stringify(a), b, c)`,
+      { argsToJson: true, split: true },
+    );
+
+    expect(transformed).toContain(
+      `console.log("[index.ts:1:0]", JSON.stringify(a), JSON.stringify(b), JSON.stringify(c))`,
+    );
+  });
+
+  test('No Split | No Nested Wraps | Second Arg', () => {
     const transformed = applyTransformer(
       `const [a, b, c] = [1, 2, 3];\nconsole.log(a, JSON.stringify(b), c)`,
       { argsToJson: true, split: false },
@@ -144,7 +166,7 @@ describe('JSON Stringify', () => {
     );
   });
 
-  test('Split | No Nested Wraps', () => {
+  test('Split | No Nested Wraps | Second Arg', () => {
     const transformed = applyTransformer(
       `const [a, b, c] = [1, 2, 3];\nconsole.log(a, JSON.stringify(b), c)`,
       { argsToJson: true, split: true },

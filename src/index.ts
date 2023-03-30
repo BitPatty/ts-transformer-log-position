@@ -307,7 +307,9 @@ const injectLogPosition = (
     ts.SyntaxKind.PlusToken,
     shouldWrapInJsonStringify(visited, config)
       ? wrapInJsonStringify(visited)
-      : ts.isTemplateLiteral(visited) || ts.isStringLiteral(visited)
+      : ts.isTemplateLiteral(visited) ||
+        ts.isStringLiteral(visited) ||
+        isJsonStringifyCall(visited)
       ? visited
       : ts.factory.createTemplateExpression(ts.factory.createTemplateHead(''), [
           ts.factory.createTemplateSpan(
