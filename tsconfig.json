@@ -16,7 +16,6 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true
   },
   "include": ["src/**/*", "test/**/*", "./*.ts"],
