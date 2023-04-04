@@ -108,7 +108,7 @@ Adds +1 to each line / character number to match the numbering of common editors
 
 ### `argsToJson` / `stringArgsToJson`
 
-If `argsToJson` is true, the log arguments are wrapped in a JSON stringify. It omit strings and template expressions unless `stringArgsToJson` is `true`. Defaults to `false` / `false`.
+If `argsToJson` is true, the log arguments are wrapped in a JSON stringify. It omits strings and template expressions unless `stringArgsToJson` is `true`. Defaults to `false` / `false`.
 
 Examples:
 
