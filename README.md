@@ -130,7 +130,7 @@ console.log(...foo);
 // out
 console.log(
   '[src/sample.ts:0:0] ',
-  ...foo.map((__ttlp__v_0) => JSON.stringify(__ttlp__v_)),
+  ...foo.map((__ttlp__v_0) => JSON.stringify(__ttlp__v_0)),
 );
 
 // in
