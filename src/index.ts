@@ -6,8 +6,6 @@ import {
   TransformerOptions,
 } from './transformer.config';
 
-type Visitor = (node: ts.Node) => ts.VisitResult<ts.Node>;
-
 const IGNORE_FILE_PATTERN = '@ts-transformer-log-position disable';
 const IGNORE_LINE_PATTERN = '@ts-transformer-log-position ignore';
 const UNIQUE_IDENTIFIER_PREFIX = '__ttlp__v_';
@@ -293,7 +291,7 @@ const processLogArguments = (
 const injectLogPosition = (
   exp: ts.Expression,
   sourceFile: ts.SourceFile,
-  visitor: Visitor,
+  visitor: ts.Visitor,
   context: ts.TransformationContext,
   position: ts.LineAndCharacter,
   config: TransformerConfig,
@@ -393,15 +391,21 @@ const transformer = (
 ): ts.Transformer<ts.SourceFile> => {
   let uniqueIdentifierCounter = 0;
 
-  return (sourceFile) => {
+  return (sourceFile: ts.SourceFile): ts.SourceFile => {
     if (isFileIgnored(sourceFile)) {
-      const visitor: Visitor = (n) => ts.visitEachChild(n, visitor, context);
-      return ts.visitNode(sourceFile, visitor);
+      const visitor: ts.Visitor<ts.SourceFile, ts.SourceFile> = (n) =>
+        ts.visitEachChild(n, visitor, context);
+
+      return ts.visitNode<ts.SourceFile, ts.SourceFile, ts.SourceFile>(
+        sourceFile,
+        visitor,
+        (n): n is ts.SourceFile => n.kind == ts.SyntaxKind.SourceFile,
+      );
     }
 
     const ignoredLines = scanForIgnoredLines(sourceFile);
 
-    const visitor: Visitor = (node) => {
+    const visitor: ts.Visitor<ts.Node, ts.Node> = (node) => {
       const nodePosition = sourceFile.getLineAndCharacterOfPosition(
         node.getStart(),
       );
@@ -523,7 +527,11 @@ const transformer = (
       return ts.visitEachChild(node, visitor, context);
     };
 
-    return ts.visitNode(sourceFile, visitor);
+    return ts.visitNode<ts.SourceFile, ts.Node, ts.SourceFile>(
+      sourceFile,
+      visitor,
+      (n): n is ts.SourceFile => n.kind === ts.SyntaxKind.SourceFile,
+    );
   };
 };
 
