@@ -31,8 +31,8 @@ jobs:
           - '16.0.0' # Min supported version
           - '18.12.1' # Max supported version
         typescript:
-          - '4.3.2' # Min supported version
-          - '4.8.4' # Max supported version
+          - '5.0.2' # Min supported version
+          - '5.0.4' # Max supported version
         modulekind:
           - 'es2015'
           - 'es2020'
