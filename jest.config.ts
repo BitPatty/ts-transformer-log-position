@@ -11,5 +11,6 @@ export default (): Config.InitialOptions => {
     transform: {
       '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
     },
+    collectCoverageFrom: ['dist/**/*.js'],
   };
 };
