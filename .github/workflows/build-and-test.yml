@@ -29,7 +29,7 @@ jobs:
       matrix:
         node:
           - '16.0.0' # Min supported version
-          - '18.12.1' # Max supported version
+          - '20.3.0' # Max supported version
         typescript:
           - '5.0.2' # Min supported version
           - '5.0.4' # Max supported version
