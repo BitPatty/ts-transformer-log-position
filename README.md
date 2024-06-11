@@ -8,7 +8,7 @@ A configurable Typescript AST transformer that injects the position of a log sta
 2. Install the package `npm i --save-dev @bitpatty/ts-transformer-log-position`
 3. For ts-patch users: Add the transformer to your `tsconfig.json`:
 
-```
+```jsonc
 {
   "compilerOptions": {
     "plugins": [
