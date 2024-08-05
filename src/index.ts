@@ -270,8 +270,8 @@ const processLogArguments = (
           )
         : a
       : shouldWrapInJsonStringify(a, config)
-      ? wrapInJsonStringify(a)
-      : a,
+        ? wrapInJsonStringify(a)
+        : a,
   );
 
   return [newArgs, uniqueIdentifierCounter];
@@ -306,15 +306,18 @@ const injectLogPosition = (
     shouldWrapInJsonStringify(visited, config)
       ? wrapInJsonStringify(visited)
       : ts.isTemplateLiteral(visited) ||
-        ts.isStringLiteral(visited) ||
-        isJsonStringifyCall(visited)
-      ? visited
-      : ts.factory.createTemplateExpression(ts.factory.createTemplateHead(''), [
-          ts.factory.createTemplateSpan(
-            visited,
-            ts.factory.createTemplateTail(''),
+          ts.isStringLiteral(visited) ||
+          isJsonStringifyCall(visited)
+        ? visited
+        : ts.factory.createTemplateExpression(
+            ts.factory.createTemplateHead(''),
+            [
+              ts.factory.createTemplateSpan(
+                visited,
+                ts.factory.createTemplateTail(''),
+              ),
+            ],
           ),
-        ]),
   );
 };
 
