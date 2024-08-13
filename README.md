@@ -1,6 +1,6 @@
 # ts-transformer-log-position
 
-A configurable Typescript AST transformer that injects the position of a log statement from the original source file into the respective log message **at build time**, allowing you to trace back log messages without emitting, exposing or requiring source maps.
+A configurable Typescript AST transformer that injects the position of a log statement from the original source file into the respective log message at build time, allowing you to trace back log messages without emitting, exposing or requiring source maps.
 
 ## Usage
 
@@ -13,15 +13,22 @@ A configurable Typescript AST transformer that injects the position of a log sta
   "compilerOptions": {
     "plugins": [
       {
-        "transform": "@bitpatty/ts-transformer-log-position"
+        "transform": "@bitpatty/ts-transformer-log-position",
         // Additional transformer configuration can be applied here
-      }
-    ]
-  }
+      },
+    ],
+  },
 }
 ```
 
 If you use a different compiler than ts-patch, refer to the respective documentation on how to apply transformers.
+
+## Compatibility
+
+| TypeScript Version | Package Version |
+| ------------------ | --------------- |
+| 4.x.x              | 2.x.x           |
+| 5.x.x              | 3.x.x           |
 
 ## Sample
 
