@@ -30,10 +30,10 @@ jobs:
       matrix:
         node:
           - '16.0.0' # Min supported version
-          - '20.3.0' # Max supported version
+          - '22.6.0' # Max supported version
         typescript:
           - '5.0.2' # Min supported version
-          - '5.0.4' # Max supported version
+          - '5.5.4' # Max supported version
         modulekind:
           - 'es2015'
           - 'es2020'
