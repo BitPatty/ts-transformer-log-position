@@ -25,7 +25,7 @@ const testSet = [
 ];
 
 describe('Simple Log', () => {
-  test.each(testSet)('No Split | console.log(%s)', (str: string, _) => {
+  test.each(testSet)('No Split | console.log(%s)', (str: string) => {
     const transformed = applyTransformer(`console.log(${str})`, {
       split: false,
     });
@@ -39,7 +39,7 @@ describe('Simple Log', () => {
     );
   });
 
-  test.each(testSet)('Split | console.log(%s)', (str: string, _) => {
+  test.each(testSet)('Split | console.log(%s)', (str: string) => {
     const transformed = applyTransformer(`console.log(${str})`, {
       split: true,
     });

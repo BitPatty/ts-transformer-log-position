@@ -22,15 +22,7 @@ export default [
       'coverage/**/*',
       'dist/**/*',
       'scripts/**/*',
-      '**/*.sh',
-      'coverage/**/*',
-      'dist/**/*',
-      'scripts/**/*',
-      'demo/**/*',
-      '**/*.sh',
       '**/rollup.config.mjs',
-      'test/**/*',
-      'test-output/**/*',
     ],
   },
   ...compat.extends(
@@ -51,11 +43,9 @@ export default [
       globals: {
         ...globals.node,
       },
-
       parser: tsParser,
       ecmaVersion: 5,
       sourceType: 'commonjs',
-
       parserOptions: {
         project: './tsconfig.json',
       },
@@ -95,28 +85,14 @@ export default [
           usePrettierrc: true,
         },
       ],
-
-      // "valid-jsdoc": ["error", {
-      //     requireReturn: false,
-      //     requireReturnType: false,
-      //     requireParamType: false,
-      // }],
     },
   },
   {
-    files: ['**/*.spec.ts'],
-
+    files: ['test/**/*.spec.ts'],
     languageOptions: {
       globals: {
         ...jest.environments.globals.globals,
       },
-    },
-  },
-  {
-    files: ['test/**/*.js'],
-
-    rules: {
-      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 ];

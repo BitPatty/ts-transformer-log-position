@@ -6,8 +6,6 @@ const [majorVersion, minorVersion] = ts.versionMajorMinor.split('.');
 const encloseArrowFunctionParameters =
   majorVersion === '4' && minorVersion === '3';
 
-ts.version;
-
 test('console.log()', () => {
   const transformed = applyTransformer('console.log()');
   expect(transformed).toContain('console.log("[index.ts:0:0]");');

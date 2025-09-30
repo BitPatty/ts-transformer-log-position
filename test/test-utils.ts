@@ -80,6 +80,6 @@ const applyTransformer = (
  * @param value  The string
  * @returns      The template literal
  */
-const createTemplateLiteral = (value: string) => '`${' + value + '}`';
+const createTemplateLiteral = (value: string): string => '`${' + value + '}`';
 
 export { applyTransformer, createTemplateLiteral };
