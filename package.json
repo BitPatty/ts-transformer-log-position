@@ -1,9 +1,12 @@
 {
   "name": "@bitpatty/ts-transformer-log-position",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Injects the position of log statements into the log messages at build time",
   "author": "Matteias Collet <matteias.collet@bluewin.ch>",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=20.0.0 <25.0.0"
+  },
   "scripts": {
     "prepare": "ts-patch install -s",
     "build": "rimraf dist && rollup -c",
