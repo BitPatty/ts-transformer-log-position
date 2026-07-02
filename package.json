@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/BitPatty/ts-transformer-log-position.git"
+    "url": "git+https://github.com/BitPatty/ts-transformer-log-position.git"
   },
   "license": "MIT",
   "bugs": {
