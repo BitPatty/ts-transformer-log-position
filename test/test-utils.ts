@@ -14,6 +14,18 @@ import transformerFactory, { TransformerOptions } from '../dist';
 const tsDir = dirname(require.resolve('typescript'));
 const tsLibs = readdirSync(tsDir).filter((f) => f.endsWith('.d.ts'));
 
+export const COMPILER_OPTIONS = {
+  module:
+    ts.ModuleKind[
+      process.env.JEST_TRANSFORMER_MODULE_KIND as keyof typeof ts.ModuleKind
+    ],
+  target:
+    ts.ScriptTarget[
+      process.env.JEST_TRANSFORMER_SCRIPT_TARGET as keyof typeof ts.ScriptTarget
+    ],
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
+};
+
 /**
  * Applies the transformer to the specified source
  *f
@@ -31,20 +43,7 @@ const applyTransformer = (
   if (!process.env.JEST_TRANSFORMER_MODULE_KIND)
     throw new Error('Missing module kind');
 
-  const compilerOptions = {
-    module:
-      ts.ModuleKind[
-        process.env.JEST_TRANSFORMER_MODULE_KIND as keyof typeof ts.ModuleKind
-      ],
-    target:
-      ts.ScriptTarget[
-        process.env
-          .JEST_TRANSFORMER_SCRIPT_TARGET as keyof typeof ts.ScriptTarget
-      ],
-    moduleResolution: ts.ModuleResolutionKind.Bundler,
-  };
-
-  const fsMap = createDefaultMapFromNodeModules(compilerOptions);
+  const fsMap = createDefaultMapFromNodeModules(COMPILER_OPTIONS);
 
   for (const lib of tsLibs)
     fsMap.set(`/${lib}`, readFileSync(join(tsDir, lib), 'utf8'));
@@ -52,11 +51,11 @@ const applyTransformer = (
   fsMap.set('index.ts', source);
 
   const system = createSystem(fsMap);
-  const host = createVirtualCompilerHost(system, compilerOptions, ts);
+  const host = createVirtualCompilerHost(system, COMPILER_OPTIONS, ts);
 
   const program = ts.createProgram({
     rootNames: [...fsMap.keys()],
-    options: compilerOptions,
+    options: COMPILER_OPTIONS,
     host: host.compilerHost,
   });
 
