@@ -2,10 +2,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
-    "experimentalDecorators": true,
     "incremental": true,
     "module": "es2022",
     "moduleResolution": "bundler",
@@ -18,7 +15,7 @@
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "ES2023",
+    "target": "es2023",
     "typeRoots": [
       "./node_modules/@types",
       "src/types"

@@ -36,10 +36,10 @@ jobs:
           - '6.0.3' # Max supported version
         modulekind:
           - 'es2015'
-          - 'es2023'
+          - 'es2022'
         scriptversion:
           - 'es2015'
-          - 'es2023'
+          - 'es2025'
     env:
       JEST_TS_MODULE_KIND: ${{ matrix.modulekind }}
       JEST_TS_SCRIPT_TARGET: ${{ matrix.scriptversion }}
