@@ -47,16 +47,16 @@ export type AccessTreeNode = {
 export type AccessTreeRootNode = AccessTreeNode;
 
 export class TransformerConfig {
-  public readonly accessTree: AccessTreeRootNode;
+  public readonly accessTree!: AccessTreeRootNode;
   public readonly projectRoot: string | undefined;
-  public readonly templateString: string;
+  public readonly templateString!: string;
 
-  public readonly incrementCharNumber: boolean;
-  public readonly incrementLineNumber: boolean;
-  public readonly split: boolean;
+  public readonly incrementCharNumber!: boolean;
+  public readonly incrementLineNumber!: boolean;
+  public readonly split!: boolean;
 
-  public readonly argsToJson: boolean;
-  public readonly stringArgsToJson: boolean;
+  public readonly argsToJson!: boolean;
+  public readonly stringArgsToJson!: boolean;
 
   public constructor(
     program: ts.Program,

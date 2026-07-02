@@ -5,20 +5,31 @@
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
+      // Set *default* container specific settings.json values on container create.
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "remote.autoForwardPorts": false,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.defaultProfile.osx": "zsh",
+        "terminal.integrated.profiles.osx": {
+          "zsh": {
+            "path": "zsh",
+            "args": [
+              "-l"
+            ]
+          }
+        }
       },
+      // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
         "mikestead.dotenv",
-        "ms-azuretools.vscode-docker",
-        "ms-vsliveshare.vsliveshare",
-        "wayou.vscode-todo-highlight"
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one",
+        "eamodio.gitlens"
       ]
     }
   },
   "forwardPorts": [],
-  "postCreateCommand": "bash -i .devcontainer/init.sh",
+  "postCreateCommand": "bash -i .devcontainer/post-create.sh",
   "remoteUser": "node"
 }

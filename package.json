@@ -1,17 +1,16 @@
 {
   "name": "@bitpatty/ts-transformer-log-position",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "Injects the position of log statements into the log messages at build time",
   "author": "Matteias Collet <matteias.collet@bluewin.ch>",
   "main": "dist/index.js",
   "engines": {
-    "node": ">=20.0.0 <25.0.0"
+    "node": ">=22.0.0 <27.0.0"
   },
   "scripts": {
     "prepare": "ts-patch install -s",
-    "build": "rimraf dist && rollup -c",
+    "build": "rm -rf dist && rollup -c",
     "deps:force-upgrade": "npm-check-updates -u && rm -rf node_modules && rm -f package-lock.json && npm i",
-    "docs": "typedoc src/index.ts",
     "format": "prettier --write \"{src,test}/**/*.ts\" ",
     "lint": "eslint --fix \"{test,src}/**/*.{js,ts}\"",
     "pretest": "npm run build && jest --clearCache",
@@ -37,28 +36,29 @@
   "types": "./dist/index.d.ts",
   "homepage": "https://github.com/BitPatty/ts-transformer-log-position#readme",
   "devDependencies": {
+    "@eslint/eslintrc": "3.3.5",
+    "@eslint/js": "10.0.1",
     "@types/jest": "30.0.0",
-    "@types/node": "24.6.0",
-    "@typescript-eslint/eslint-plugin": "8.45.0",
-    "@typescript-eslint/parser": "8.45.0",
-    "@typescript/vfs": "1.6.1",
-    "eslint": "9.36.0",
+    "@types/node": "26.1.0",
+    "@typescript-eslint/eslint-plugin": "8.62.1",
+    "@typescript-eslint/parser": "8.62.1",
+    "@typescript/vfs": "1.6.4",
+    "eslint": "10.6.0",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-jest": "29.0.1",
-    "eslint-plugin-prettier": "5.5.4",
-    "jest-diff": "30.2.0",
-    "npm-check-updates": "19.0.0",
-    "prettier": "3.6.2",
-    "rimraf": "6.0.1",
-    "rollup": "4.52.3",
-    "rollup-plugin-typescript2": "0.36.0",
-    "ts-jest": "29.4.4",
+    "eslint-plugin-jest": "29.15.4",
+    "eslint-plugin-prettier": "5.5.6",
+    "globals": "17.7.0",
+    "npm-check-updates": "22.2.9",
+    "prettier": "3.9.4",
+    "rollup": "4.62.2",
+    "rollup-plugin-typescript2": "0.37.0",
+    "ts-jest": "29.4.11",
     "ts-node": "10.9.2",
-    "ts-patch": "3.3.0",
+    "ts-patch": "4.0.1",
     "tslib": "2.8.1",
-    "typescript": "5.9.2"
+    "typescript": "6.0.3"
   },
   "peerDependencies": {
-    "typescript": ">=5.5.4"
+    "typescript": ">=6.0.0"
   }
 }

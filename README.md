@@ -29,6 +29,7 @@ If you use a different compiler than ts-patch, refer to the respective documenta
 | ------------------ | --------------- |
 | 4.x.x              | 2.x.x           |
 | 5.x.x              | 3.x.x           |
+| 6.x.x              | 4.x.x           |
 
 ## Sample
 

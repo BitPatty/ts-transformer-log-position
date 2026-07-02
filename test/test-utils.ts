@@ -16,7 +16,7 @@ const tsLibs = readdirSync(tsDir).filter((f) => f.endsWith('.d.ts'));
 
 /**
  * Applies the transformer to the specified source
- *
+ *f
  * @param source   The source
  * @param options  The transformer options
  * @returns        The compilation output
@@ -41,7 +41,7 @@ const applyTransformer = (
         process.env
           .JEST_TRANSFORMER_SCRIPT_TARGET as keyof typeof ts.ScriptTarget
       ],
-    moduleResolution: ts.ModuleResolutionKind.NodeJs,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
   };
 
   const fsMap = createDefaultMapFromNodeModules(compilerOptions);

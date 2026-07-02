@@ -150,10 +150,7 @@ const isJsonStringifyCall = (node: ts.Node): boolean => {
  */
 const isLogExpression = (
   node:
-    | ts.Node
-    | ts.CallExpression
-    | ts.NewExpression
-    | ts.ArrayLiteralExpression,
+    ts.Node | ts.CallExpression | ts.NewExpression | ts.ArrayLiteralExpression,
   config: TransformerConfig,
 ): node is ts.CallExpression => {
   if (!config.accessTree) return false;
@@ -396,10 +393,10 @@ const transformer = (
 
   return (sourceFile: ts.SourceFile): ts.SourceFile => {
     if (isFileIgnored(sourceFile)) {
-      const visitor: ts.Visitor<ts.SourceFile, ts.SourceFile> = (n) =>
+      const visitor: ts.Visitor<ts.Node, ts.Node> = (n) =>
         ts.visitEachChild(n, visitor, context);
 
-      return ts.visitNode<ts.SourceFile, ts.SourceFile, ts.SourceFile>(
+      return ts.visitNode<ts.SourceFile, ts.Node, ts.SourceFile>(
         sourceFile,
         visitor,
         (n): n is ts.SourceFile => n.kind == ts.SyntaxKind.SourceFile,

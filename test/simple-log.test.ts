@@ -5,7 +5,7 @@ test('console.log()', () => {
   expect(transformed).toContain('console.log("[index.ts:0:0]");');
 });
 
-const testSet = [
+const testSet: [string, boolean][] = [
   ['"foo"', false],
   ["'foo'", false],
   ['1', true],
