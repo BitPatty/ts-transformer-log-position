@@ -38,7 +38,7 @@ jobs:
           - 'es2020'
           - 'es2022'
         scriptversion:
-          - 'es2022'
+          - 'es2020'
           - 'es2025'
     env:
       JEST_TS_MODULE_KIND: ${{ matrix.modulekind }}

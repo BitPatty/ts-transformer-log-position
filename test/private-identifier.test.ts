@@ -19,6 +19,7 @@ describe('Private Identifiers', () => {
     });
 
     switch (COMPILER_OPTIONS.target) {
+      case ts.ScriptTarget.ES2022:
       case ts.ScriptTarget.ES2025:
         expect(transformed).toContain('this.#log("[index.ts:5:0] " + "test");');
         break;
