@@ -1,5 +1,6 @@
 #!/bin/bash
-set -ex
+set -e
+
 nvm install
 nvm use
 nvm alias default $(node --version)
